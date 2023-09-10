@@ -11,8 +11,15 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "customWebpackConfig": {
+              "path": "./angular.webpack.js",
+              "replaceDuplicatePlugins": true,
+              "mergeRules": {
+                "externals": "replace"
+              }
+            },
             "outputPath": "dist/text-editor",
             "index": "src/index.html",
             "main": "src/main.ts",

@@ -1,0 +1,28 @@
+:host {
+    left: 0;
+    height: 100%;
+    position:absolute;
+    background-color: #3B434C;
+    color: #84BCAF;
+    overflow-y: scroll;
+}
+
+:host::-webkit-scrollbar {
+    width: 10px;
+}
+
+:host::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+:host::-webkit-scrollbar-thumb {
+    background: #57677a;
+}
+
+:host::-webkit-scrollbar-thumb:hover {
+    background: #4a5766;
+}
+
+.container {
+    height: 150%
+}
