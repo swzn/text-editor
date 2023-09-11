@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostBinding } from '@angular/core';
+import { FileSystemService } from 'src/app/filesystem/filesystem.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -7,6 +8,15 @@ import { AfterViewInit, Component, ElementRef, HostBinding } from '@angular/core
 })
 export class SidebarComponent {
 
+  constructor(private fileSystem: FileSystemService) {
+
+  }
+
+  getWorkingDirectory() {
+    let a = this.fileSystem.getWorkingDirectory()
+    console.log('now logging a')
+    console.log(a)
+  }
 
   @HostBinding('style.width') 
   get getWidth() {

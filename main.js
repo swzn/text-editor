@@ -1,6 +1,7 @@
-const {app, BrowserWindow, Menu, dialog} = require('electron');
+const {app, BrowserWindow, Menu, dialog, ipcMain} = require('electron');
 
-const fshandler = require('./src/main/fshandler')
+const fshandler = require('./src/main/fshandler');
+const { IpcChannel } = require('./src/app/ipc/ipc-channels');
 
 let win;
 
@@ -27,6 +28,10 @@ function createWindow() {
 
     win = new BrowserWindow({
         backgroundColor: '#EEE',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        },
         show: false
     })
 
@@ -49,9 +54,13 @@ function createWindow() {
 
     Menu.setApplicationMenu(menu);
 
-    win.loadFile('./dist/text-editor/index.html')
+    ipcMain.on(IpcChannel.GetWorkingDirectory, (
+        (e,args) => {
+            e.returnValue = tree
+        }
+    ))
 
-    console.log(win.webContents)
+    win.loadFile('./dist/text-editor/index.html')
 
     win.on('closed', () => {
         win = null

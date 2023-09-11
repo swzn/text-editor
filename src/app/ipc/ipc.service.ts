@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ipcRenderer, IpcRendererEvent } from 'electron';
+import { IpcChannel } from './ipc-channels.js';
 
 @Injectable({
   providedIn: 'root'
@@ -7,12 +8,20 @@ import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 export class IpcService {
 
-  setOnListener(channel:string, callback:(event: IpcRendererEvent, ...args: any[]) => void) {
-    ipcRenderer.on(channel, callback)
+  async setOnListener(channel:IpcChannel, callback:(event: IpcRendererEvent, ...args: any[]) => void) {
+    ipcRenderer.on(channel.toString(), callback)
   }
 
-  setOnceListener(channel:string, callback:(event: IpcRendererEvent, ...args: any[]) => void) {
-    ipcRenderer.once(channel, callback)
+  async setOnceListener(channel:IpcChannel, callback:(event: IpcRendererEvent, ...args: any[]) => void) {
+    ipcRenderer.once(channel.toString(), callback)
+  }
+
+  async send(channel: IpcChannel, ...args: any[]) {
+    ipcRenderer.send(channel.toString(), args)
+  }
+
+  sendSync(channel: IpcChannel, ...args: any[]): any {
+    return ipcRenderer.sendSync(channel.toString(), args)
   }
 
 }
