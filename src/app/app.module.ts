@@ -5,11 +5,15 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './window/sidebar/sidebar.component';
 import { IpcService } from './ipc/ipc.service';
+import { SidebarFileComponent } from './window/sidebar/sidebar-file/sidebar-file.component';
+import { SidebarDirectoryComponent } from './window/sidebar/sidebar-directory/sidebar-directory.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SidebarComponent,
+    SidebarFileComponent,
+    SidebarDirectoryComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,9 @@
+:host {
+    padding: 5px 0 5px 5px;
+    height: 15px;
+    display: block;
+}
+
+:host:hover {
+    background-color: #4a5766;
+}

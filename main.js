@@ -22,6 +22,18 @@ let menu = Menu.buildFromTemplate(
     ]
 )
 
+
+function workingDirectoryPrompt() {
+    let path = dialog.showOpenDialogSync(win, {
+        title: 'Choose working directory',
+        properties: [
+            "openDirectory", "createDirectory"
+        ]
+    })
+
+    return path;
+}
+
 function createWindow() {
 
     
@@ -36,14 +48,9 @@ function createWindow() {
     })
 
 
-    const wd = dialog.showOpenDialogSync(win, {
-        title: 'Choose working directory',
-        properties: [
-            "openDirectory", "createDirectory"
-        ]
-    })
+    const wd =  workingDirectoryPrompt()
 
-    tree = fshandler.recurse(wd[0], 0)
+    tree = wd ? fshandler.recurse(wd[0], 0) : {}
 
     win.on('ready-to-show', () => {
         win.maximize()

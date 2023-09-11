@@ -1,3 +1,22 @@
 <div class="container">
     <button (click)="getWorkingDirectory()">Click me</button>
+    <ng-container *ngIf="workingDirectory">
+        <app-sidebar-directory [directory]="workingDirectory">
+            <ng-container *ngTemplateOutlet="listDirectory; context: {directoryRef: workingDirectory}">
+            </ng-container>
+        </app-sidebar-directory>
+    </ng-container> 
 </div>
+
+
+<ng-template #listDirectory let-workingDirectory="directoryRef">
+    <ng-container *ngFor="let directory of workingDirectory.getDirectories()">
+        <app-sidebar-directory [directory]="directory">
+            <ng-container *ngTemplateOutlet="listDirectory; context: {directoryRef: directory}">
+            </ng-container>
+        </app-sidebar-directory>
+    </ng-container>
+    <ng-container *ngFor="let file of workingDirectory.getFiles()">
+        <app-sidebar-file [file]="file"></app-sidebar-file>
+    </ng-container>
+</ng-template>

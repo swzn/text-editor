@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ElementRef, HostBinding } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 import { FileSystemService } from 'src/app/filesystem/filesystem.service';
+import { DirectoryNode } from 'src/app/filesystem/models/directorynode.model';
 
 @Component({
   selector: 'app-sidebar',
@@ -8,18 +9,23 @@ import { FileSystemService } from 'src/app/filesystem/filesystem.service';
 })
 export class SidebarComponent {
 
-  constructor(private fileSystem: FileSystemService) {
+  workingDirectory: DirectoryNode;
 
+  constructor(private fileSystem: FileSystemService) {
   }
 
-  getWorkingDirectory() {
-    let a = this.fileSystem.getWorkingDirectory()
-    console.log('now logging a')
-    console.log(a)
+  refreshWorkingDirectory() {
+    const pwd = this.fileSystem.getWorkingDirectory()
+    if(pwd) this.workingDirectory = pwd;
+  }
+
+   getWorkingDirectory(): DirectoryNode | null {
+    if(this.workingDirectory === undefined || this.workingDirectory === null || !this.workingDirectory) this.refreshWorkingDirectory()
+    return this.workingDirectory
   }
 
   @HostBinding('style.width') 
-  get getWidth() {
+  get width() {
     return '300px';
   }
 

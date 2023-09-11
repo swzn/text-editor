@@ -1,0 +1,2 @@
+<div class="parent" (click)="toggleDirectory()"><span [style]="'margin-left:' + getTabs()">{{getArrow()}} {{directory.name}}</span></div>
+<ng-content *ngIf="toggled"></ng-content>
