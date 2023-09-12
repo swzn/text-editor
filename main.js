@@ -44,6 +44,7 @@ function createWindow() {
             nodeIntegration: true,
             contextIsolation: false
         },
+        frame: false,
         show: false
     })
 
@@ -58,8 +59,6 @@ function createWindow() {
     })
 
     win.webContents.toggleDevTools()
-
-    Menu.setApplicationMenu(menu);
 
     ipcMain.on(IpcChannel.GetWorkingDirectory.toString(), (
         (e,args) => {

@@ -22,8 +22,6 @@ export class IpcService {
 
   async invoke(channel: IpcChannel, ...args:any[]) {
     const output = await ipcRenderer.invoke(channel.toString(), args)
-    console.log(output)
-    console.log('c')
     return output;
   }
 

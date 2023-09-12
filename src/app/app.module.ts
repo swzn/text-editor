@@ -7,6 +7,10 @@ import { SidebarComponent } from './window/sidebar/sidebar.component';
 import { IpcService } from './ipc/ipc.service';
 import { SidebarFileComponent } from './window/sidebar/sidebar-file/sidebar-file.component';
 import { SidebarDirectoryComponent } from './window/sidebar/sidebar-directory/sidebar-directory.component';
+import { EditorComponent } from './window/editor/editor.component';
+import { TitlebarComponent } from './window/titlebar/titlebar.component';
+import { BottombarComponent } from './window/bottombar/bottombar.component';
+import { EditorService } from './window/editor/editor.service';
 
 @NgModule({
   declarations: [
@@ -14,13 +18,17 @@ import { SidebarDirectoryComponent } from './window/sidebar/sidebar-directory/si
     SidebarComponent,
     SidebarFileComponent,
     SidebarDirectoryComponent,
+    EditorComponent,
+    TitlebarComponent,
+    BottombarComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule
   ],
   providers: [
-    IpcService
+    IpcService,
+    EditorService,
   ],
   bootstrap: [AppComponent]
 })

@@ -1,6 +1,8 @@
 import { Component, HostListener, Input } from '@angular/core';
 import { FileNode } from '../../../filesystem/models/filenode.model';
 import { FileSystemService } from 'src/app/filesystem/filesystem.service';
+import { EditorComponent } from '../../editor/editor.component';
+import { EditorService } from '../../editor/editor.service';
 
 @Component({
   selector: 'app-sidebar-file',
@@ -9,11 +11,13 @@ import { FileSystemService } from 'src/app/filesystem/filesystem.service';
 })
 export class SidebarFileComponent {
  
-  constructor(private fileSystem: FileSystemService) {}
+  constructor(
+    private fileSystem: FileSystemService,
+    private editor: EditorService
+    ) {}
 
   @Input()
   file: FileNode
-
 
   getTabs():string {
     return this.file.depth + "em";
@@ -21,7 +25,8 @@ export class SidebarFileComponent {
 
   @HostListener('click')
   async requestFile() {
-    await this.fileSystem.getFileContents(this.file.path)
+    const fileContents = await this.fileSystem.getFileContents(this.file.path)
+    this.editor.setData(fileContents);
   }
   
 }

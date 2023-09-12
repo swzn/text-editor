@@ -1,10 +1,11 @@
 :host {
     left: 0;
-    height: 100%;
-    position:absolute;
+    max-height: 94vh;
+    height: 94vh;
     background-color: #3B434C;
     color: #84BCAF;
     overflow-y: scroll;
+    float: left;
 }
 
 :host ::ng-deep {
@@ -28,7 +29,7 @@
 }
 
 .container {
-    height: 150%;
+    min-height: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;

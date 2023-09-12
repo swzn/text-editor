@@ -1,7 +1,7 @@
 const fs = require('fs')
 const fsPromises = require('fs/promises')
 const path = require('path')
-const MAX_DEPTH = 2;
+const MAX_DEPTH = 10;
 
 module.exports.recurse = recurse
 module.exports.getFileFromPath = getFileFromPath

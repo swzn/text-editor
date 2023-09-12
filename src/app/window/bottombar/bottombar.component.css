@@ -1,0 +1,11 @@
+:host {
+    margin: 0;
+    max-height: 3vh;
+    height: 3vh;
+    min-height: 20px;
+    background-color: #4a5766;
+    display: block;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
