@@ -1,10 +1,21 @@
 const fs = require('fs')
+const fsPromises = require('fs/promises')
 const path = require('path')
 const MAX_DEPTH = 2;
 
 module.exports.recurse = recurse
+module.exports.getFileFromPath = getFileFromPath
 
 
+async function getFileFromPath(path) {
+    try {
+        const data = fsPromises.readFile(path, {encoding : 'utf8'})
+        return data
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
 
 function recurse(root, depth) {
     let tree = {

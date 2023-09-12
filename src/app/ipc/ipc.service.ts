@@ -20,6 +20,13 @@ export class IpcService {
     ipcRenderer.send(channel.toString(), args)
   }
 
+  async invoke(channel: IpcChannel, ...args:any[]) {
+    const output = await ipcRenderer.invoke(channel.toString(), args)
+    console.log(output)
+    console.log('c')
+    return output;
+  }
+
   sendSync(channel: IpcChannel, ...args: any[]): any {
     return ipcRenderer.sendSync(channel.toString(), args)
   }

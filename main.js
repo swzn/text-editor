@@ -61,9 +61,16 @@ function createWindow() {
 
     Menu.setApplicationMenu(menu);
 
-    ipcMain.on(IpcChannel.GetWorkingDirectory, (
+    ipcMain.on(IpcChannel.GetWorkingDirectory.toString(), (
         (e,args) => {
             e.returnValue = tree
+        }
+    ))
+
+    ipcMain.handle(IpcChannel.GetFile.toString(), (
+        async (e, args) => {
+            const result = await fshandler.getFileFromPath(args[0])
+            return result
         }
     ))
 

@@ -6,4 +6,5 @@
 
 :host:hover {
     background-color: #4a5766;
+    cursor: pointer;
 }

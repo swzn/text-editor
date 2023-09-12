@@ -19,6 +19,12 @@ export class FileSystemService {
     return dn
   }
 
+  async getFileContents(filePath: string) {
+    let fileContents;
+    await this.ipcService.invoke(IpcChannel.GetFile, filePath).then((result) => fileContents = result)
+    return fileContents
+  }
+
 
   getDirectoryNodeFromWorkingTree(workingTree: any, depth: number): DirectoryNode {
     let root = new DirectoryNode(workingTree.path, depth)
