@@ -73,6 +73,28 @@ function createWindow() {
         }
     ))
 
+    ipcMain.on(IpcChannel.Maximize, 
+        (e) => {
+            win.maximize();
+        } 
+    )
+
+    ipcMain.on(IpcChannel.Minimize, 
+        (e) => {
+            win.minimize();
+        } 
+    )
+
+    ipcMain.on(IpcChannel.Unmaximize, 
+        (e) => {
+            win.unmaximize();
+        } 
+    )
+
+    win.on('unmaximize', (e)=> {
+        win.webContents.send(IpcChannel.UnmaximizedEvent.toString())
+    })
+
     win.loadFile('./dist/text-editor/index.html')
 
     win.on('closed', () => {

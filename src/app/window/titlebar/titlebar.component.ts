@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MenuService } from './menu.service';
 
 @Component({
   selector: 'app-titlebar',
@@ -7,4 +8,17 @@ import { Component } from '@angular/core';
 })
 export class TitlebarComponent {
 
+  constructor(
+    private menu: MenuService
+  ) {
+    
+  }
+
+  minimize() {
+    this.menu.minimize()
+  }
+
+  unmaximize() {
+    this.menu.unmaximize()
+  }
 }

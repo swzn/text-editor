@@ -11,6 +11,8 @@ import { EditorComponent } from './window/editor/editor.component';
 import { TitlebarComponent } from './window/titlebar/titlebar.component';
 import { BottombarComponent } from './window/bottombar/bottombar.component';
 import { EditorService } from './window/editor/editor.service';
+import { FormsModule } from '@angular/forms';
+import { MenuService } from './window/titlebar/menu.service';
 
 @NgModule({
   declarations: [
@@ -24,11 +26,13 @@ import { EditorService } from './window/editor/editor.service';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule
   ],
   providers: [
     IpcService,
     EditorService,
+    MenuService,
   ],
   bootstrap: [AppComponent]
 })
