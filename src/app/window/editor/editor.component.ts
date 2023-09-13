@@ -17,4 +17,8 @@ export class EditorComponent implements AfterViewInit {
     console.log('service has been set')
   }
 
+  printContents() {
+    console.log(this.content)
+  }
+
 }
