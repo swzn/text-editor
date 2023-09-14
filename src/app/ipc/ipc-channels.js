@@ -5,6 +5,7 @@ class IpcChannel {
 
     static GetFile = new IpcChannel("get-file")
     static SendFile = new IpcChannel("send-file")
+    static SaveFile = new IpcChannel("save-file")
 
     static Unmaximize = new IpcChannel("Unmaximize-app")
     static Minimize = new IpcChannel("minimize-app")

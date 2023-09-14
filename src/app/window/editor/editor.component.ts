@@ -15,11 +15,6 @@ export class EditorComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.editorService.component = this;
-    console.log('service has been set')
-  }
-
-  printContents() {
-    console.log(this.content)
   }
 
 }

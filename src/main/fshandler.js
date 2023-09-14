@@ -5,7 +5,11 @@ const MAX_DEPTH = 10;
 
 module.exports.recurse = recurse
 module.exports.getFileFromPath = getFileFromPath
+module.exports.saveFile = saveFile
 
+function saveFile(path, contents) {
+    fs.writeFileSync(path, contents)
+}
 
 async function getFileFromPath(path) {
     try {

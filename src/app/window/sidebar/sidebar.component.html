@@ -1,5 +1,7 @@
 <div class="container">
     <button (click)="getWorkingDirectory()">Click me</button>
+    <button (click)="saveCurrentFile()">Save file</button>
+
     <ng-container *ngIf="workingDirectory">
         <app-sidebar-directory [directory]="workingDirectory">
             <ng-container *ngTemplateOutlet="listDirectory; context: {directoryRef: workingDirectory}">

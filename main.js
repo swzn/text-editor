@@ -73,6 +73,20 @@ function createWindow() {
         }
     ))
 
+    ipcMain.handle(IpcChannel.SaveFile.toString(),
+        (e, data) => {
+            if(data === undefined || data === null || data.length === 0 || data[0] === undefined || data[0] === null) return false
+            const savePath = dialog.showSaveDialogSync(null, {
+              title: 'Save file',
+              defaultPath: wd[0]
+            })
+            if(savePath === undefined) return false
+            fshandler.saveFile(savePath, data[0])
+            return true
+        }
+    )
+
+
     ipcMain.on(IpcChannel.Maximize, 
         (e) => {
             win.maximize();
