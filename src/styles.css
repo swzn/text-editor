@@ -10,3 +10,7 @@ body {
     padding: 0;
 }
 
+:root {
+    --theme-main-bg: #4a5766;
+}
+

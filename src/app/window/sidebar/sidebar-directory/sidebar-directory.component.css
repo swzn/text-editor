@@ -8,5 +8,5 @@
 }
 
 :host .parent:hover {
-    background-color: #4a5766;
+    background-color: var(--theme-main-bg);
 }

@@ -3,7 +3,7 @@
     max-height: 3vh;
     height: 3vh;
     min-height: 20px;
-    background-color: #4a5766;
+    background-color: var(--theme-main-bg);
     display: block;
     user-select: none;
     -webkit-app-region: drag;
@@ -35,7 +35,7 @@ li {
 }
 
 #title:hover {
-    background-color: #4a5766;
+    background-color: var(--theme-main-bg);
 }
 
 .item {

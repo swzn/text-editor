@@ -26,10 +26,6 @@ export class SidebarDirectoryComponent {
     this.toggled = !this.toggled;
   }
 
-  isVisible() {
-    return this.toggled ? "inline-block" : "none";
-  }
-
   getArrow():string {
     return this.toggled ? "↓" : "→";
   }

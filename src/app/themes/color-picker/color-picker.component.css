@@ -1,0 +1,10 @@
+.container {
+    overflow: hidden
+}
+#picker {
+    display: block;
+    position: absolute;
+    width: 255px;
+    height: 255px;
+    background-color: white;
+}
