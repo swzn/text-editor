@@ -14,13 +14,13 @@
         </li>
     </ul>
     <div class="menu">
-        <div class="item controls">
+        <div class="item controls" (click)="minimize()">
             -
         </div>
-        <div class="item controls" (click)="unmaximize()">
-            +a
+        <div class="item controls" (click)="maximize()">
+            +
         </div>
-        <div class="item controls">
+        <div class="item controls" id="quit" (click)="quit()">
             x
         </div>
     </div>

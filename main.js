@@ -99,6 +99,12 @@ function createWindow() {
         } 
     )
 
+    ipcMain.on(IpcChannel.Quit, 
+        (e) => {
+            win.close();
+        } 
+    )
+
     ipcMain.on(IpcChannel.Unmaximize, 
         (e) => {
             win.unmaximize();
@@ -107,6 +113,10 @@ function createWindow() {
 
     win.on('unmaximize', (e)=> {
         win.webContents.send(IpcChannel.UnmaximizedEvent.toString())
+    })
+
+    win.on('maximize', (e)=> {
+        win.webContents.send(IpcChannel.MaximizedEvent.toString())
     })
 
     win.loadFile('./dist/text-editor/index.html')

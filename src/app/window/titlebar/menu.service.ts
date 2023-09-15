@@ -10,10 +10,6 @@ export class MenuService {
   constructor(
     private ipcService: IpcService
   ) { 
-    console.log('unmaximized-event() setup')
-    this.ipcService.setOnListener(IpcChannel.UnmaximizedEvent, (e)=> {
-      console.log('UnmaximizedEvent')
-    })
   }
 
   minimize() {

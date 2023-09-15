@@ -23,7 +23,6 @@ export class EditorService {
   }
 
   saveFile() {
-    console.log(this.getData())
     this.ipcService.invoke(IpcChannel.SaveFile, this.getData())
   }
 

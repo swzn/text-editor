@@ -13,6 +13,7 @@ class IpcChannel {
     static Quit = new IpcChannel("quit-app")
 
     static UnmaximizedEvent = new IpcChannel("unmaximized-event")
+    static MaximizedEvent = new IpcChannel("maximized-event")
 
 
 

@@ -46,7 +46,11 @@ li {
 }
 
 .controls {
-    padding: 0 10px;
+    padding: 0 15px;
+}
+
+#quit:hover {
+    background-color: red;
 }
 
 .container {
