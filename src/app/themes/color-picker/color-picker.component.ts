@@ -29,6 +29,8 @@ export class ColorPickerComponent implements AfterViewInit{
 
   colorGradientHue: string = '#0000ff'
 
+  private mouseheld: boolean = false
+
 
   @Input()
   pickerToggled: boolean
@@ -40,8 +42,15 @@ export class ColorPickerComponent implements AfterViewInit{
 
 
   openPicker() {
-    console.log('try again')
     this.pickerToggled = true
+  }
+
+  mouseupSliderColor() {
+    this.mouseheld = false;
+  }
+
+  mousedownSliderColor() {
+    this.mouseheld = true;
   }
 
 
@@ -78,6 +87,7 @@ export class ColorPickerComponent implements AfterViewInit{
   }
 
   setSliderColor(e: MouseEvent) {
+    if(!this.mouseheld) return
     const rect: DOMRect = this.hue.nativeElement.getBoundingClientRect()
     const colorX = e.clientX - rect.left
     const colorY = e.clientY - rect.top
