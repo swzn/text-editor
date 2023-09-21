@@ -4,7 +4,9 @@
 #picker {
     display: block;
     position: absolute;
-    width: 255px;
-    height: 255px;
-    background-color: white;
+    padding: 8px;
+    background-color: rgb(255, 47, 47);
+}
+.canvas-container {
+    padding: 5px;
 }
