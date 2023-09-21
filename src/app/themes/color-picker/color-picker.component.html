@@ -1,8 +1,9 @@
 <div class="container">
     <span (click)="openPicker()" [style.color]="value"><ng-content></ng-content> {{value}}</span>
     <div class="canvas-container" (click)="setPickerColor($event, true)" (mousemove)="setPickerColor($event)" (mouseleave)="setPickerColor($event); mouseup()" (mousedown)="mousedown()" (mouseup)="mouseup()" (mouseenter)="mousedown($event)">
-        <canvas width="512px" height="512px" #picker></canvas>
+        <canvas width="256px" height="256px" #picker></canvas>
     </div>
+    <div style="margin-top: 70px;"></div>
     <div class="canvas-container" (click)="setSliderColor($event, true)" (mousemove)="setSliderColor($event)" (mouseleave)="setSliderColor($event); mouseup()" (mousedown)="mousedown()" (mouseup)="mouseup()" (mouseenter)="mousedown($event)">
         <canvas width="290px" height="25px" #slider></canvas>
     </div>

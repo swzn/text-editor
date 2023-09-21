@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { buffer } from 'rxjs';
 
 const CIRCLE_RADIUS: number = 4
 const STROKE_WIDTH: number = 2
@@ -78,6 +79,10 @@ export class ColorPickerComponent implements AfterViewInit {
 
   private pickerPosition: Position = new Position(0,0)
 
+  private pickerBuffer : ImageData;
+
+  private sliderBuffer : ImageData;
+
   @Input()
   pickerToggled: boolean
 
@@ -100,24 +105,31 @@ export class ColorPickerComponent implements AfterViewInit {
     this.mouseheld = true;
   }
 
-
   private updatePicker() {
-    let context: CanvasRenderingContext2D = this.picker.nativeElement.getContext('2d')
-    let lightGradient: CanvasGradient = context.createLinearGradient(0,0,0, context.canvas.height)
-    lightGradient.addColorStop(0, '#00000000')
-    lightGradient.addColorStop(1, '#000000')
 
-    let hueGradient: CanvasGradient = context.createLinearGradient(0,0,context.canvas.width,0)
-    hueGradient.addColorStop(0, '#fff')
-    hueGradient.addColorStop(1, this.colorGradientHue)
+    const context: CanvasRenderingContext2D = this.picker.nativeElement.getContext('2d')
+    const buffer = context.createImageData(context.canvas.width, context.canvas.height)
+    const grayscale: Lerp = new Lerp(0,context.canvas.height - 1, 0, 255)
+    const r = new Lerp(0, context.canvas.width - 1,  255,   parseInt(this.colorGradientHue.substring(1,3), 16))
+    const g = new Lerp(0, context.canvas.height - 1, 255, parseInt(this.colorGradientHue.substring(3,5), 16))
+    const b = new Lerp(0, context.canvas.height - 1, 255, parseInt(this.colorGradientHue.substring(5,7), 16))
 
-    context.fillStyle = hueGradient;
-    context.fillRect(0,0 , context.canvas.width, context.canvas.height)
+     for(let i = 0; i < context.canvas.width; i++) {
+      const rColor = r.eval(i)
+      const gColor = g.eval(i)
+      const bColor = b.eval(i)
+       for(let j = 0; j < context.canvas.height; j++) {
+         const basepixel = j * 4 * context.canvas.width + i * 4
+         buffer.data[basepixel + 0] = (255 - grayscale.eval(j)) / 255 * (rColor)
+         buffer.data[basepixel + 1] = (255 - grayscale.eval(j)) / 255 * (gColor)
+         buffer.data[basepixel + 2] = (255 - grayscale.eval(j)) / 255 * (bColor)
+         buffer.data[basepixel + 3] = 255
+       }
+     }
+    
+    context.putImageData(buffer, 0, 0)
 
-    context.fillStyle = lightGradient;
-    context.fillRect(0,0 , context.canvas.width, context.canvas.height)
-
-    this.drawCircle(context, this.pickerPosition)
+    this.pickerBuffer = buffer;
   }
 
   ngAfterViewInit(): void {
@@ -137,45 +149,45 @@ export class ColorPickerComponent implements AfterViewInit {
     sliderGradient.addColorStop(1, '#0000ff')
     slider.fillStyle = sliderGradient
     slider.fillRect(0,0,slider.canvas.width, slider.canvas.height)
+    this.sliderBuffer = slider.getImageData(0,0, slider.canvas.width, slider.canvas.height)
+  }
 
-    this.drawCircle(slider, this.sliderPosition)
+  refreshColor() {
+    const context = this.picker.nativeElement.getContext("2d")
+    const bufferPosition = this.pickerPosition.y * context.canvas.width * 4 + this.pickerPosition.x * 4
+    this.value = this.rgbToHex(this.pickerBuffer.data[bufferPosition], this.pickerBuffer.data[bufferPosition + 1], this.pickerBuffer.data[bufferPosition + 2])
   }
 
   setSliderColor(e: MouseEvent, click?: boolean) {
     if(!this.mouseheld && !click) return
     const rect: DOMRect = this.slider.nativeElement.getBoundingClientRect()
-    const colorX = Math.max(Math.min(e.clientX - rect.left, rect.width), 0)
-    const colorY = Math.max(Math.min(e.clientY - rect.top, rect.height), 0)
+    const context = this.slider.nativeElement.getContext("2d")
+    const colorX = Math.round(Math.max(Math.min(e.clientX - rect.left, rect.width - 1), 0))
+    const colorY = Math.round(Math.max(Math.min(e.clientY - rect.top, rect.height - 1), 0))
 
     this.sliderPosition.setPosition(colorX, colorY)
 
-
-    const buffer: ImageData = this.slider.nativeElement.getContext('2d').getImageData(this.sliderPosition.x, this.sliderPosition.y, 1, 1);
-    this.colorGradientHue = this.bufferToHex(buffer)
+    context.putImageData(this.sliderBuffer, 0, 0)
+    const bufferPosition = this.sliderPosition.y * context.canvas.width * 4 + this.sliderPosition.x * 4
+    this.colorGradientHue = this.rgbToHex(this.sliderBuffer.data[bufferPosition], this.sliderBuffer.data[bufferPosition + 1], this.sliderBuffer.data[bufferPosition + 2])
+    this.drawCircle(context, this.sliderPosition)
     this.updatePicker()
-    this.updateSlider()
+    this.refreshColor()
   }
 
   setPickerColor(e: MouseEvent, click?: boolean) {
     if(!this.mouseheld && !click) return
     const rect: DOMRect = this.picker.nativeElement.getBoundingClientRect()
+    const context = this.picker.nativeElement.getContext("2d")
 
-    const colorX = Math.max(Math.min(e.clientX - rect.left, rect.width), 0)
-    const colorY = Math.max(Math.min(e.clientY - rect.top, rect.height), 0)
-
+    const colorX = Math.round(Math.max(Math.min(e.clientX - rect.left, rect.width - 1), 0))
+    const colorY = Math.round(Math.max(Math.min(e.clientY - rect.top, rect.height - 1), 0))
 
     this.pickerPosition.setPosition(colorX, colorY)
+    context.putImageData(this.pickerBuffer, 0, 0)
+    this.drawCircle(this.picker.nativeElement.getContext("2d"), this.pickerPosition)
 
-    const buffer: ImageData = this.picker.nativeElement.getContext('2d').getImageData(this.pickerPosition.x, this.pickerPosition.y, 1, 1);
-    this.value = this.bufferToHex(buffer)
-    if(this.value === "#ffffff") {
-      console.log(buffer)
-      console.log(this.pickerPosition.x + " " + this.pickerPosition.y)
-      console.log(this.value)
-    }
-    this.updatePicker()
-    this.updateSlider()
-
+    this.refreshColor()
   }
   
   private colorToHex(color: number) {
@@ -183,8 +195,8 @@ export class ColorPickerComponent implements AfterViewInit {
     return hex.length == 1 ? "0" + hex : hex
   }
 
-  private bufferToHex(buffer: ImageData) {
-    return "#" + this.colorToHex(buffer.data[0]) + this.colorToHex(buffer.data[1]) + this.colorToHex(buffer.data[2])
+  private rgbToHex(r:number, g:number, b:number) {
+    return "#" + this.colorToHex(r) + this.colorToHex(g) + this.colorToHex(b)
   }
 
   private drawCircle(context: CanvasRenderingContext2D, position: Position) {
