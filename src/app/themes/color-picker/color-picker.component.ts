@@ -98,6 +98,8 @@ export class ColorPickerComponent implements AfterViewInit {
 
   mouseup() {
     this.mouseheld = false;
+    console.log(this.colorGradientHue)
+    console.log(this.value)
   }
 
   mousedown(event?: MouseEvent) {
@@ -141,12 +143,13 @@ export class ColorPickerComponent implements AfterViewInit {
 
   updateSlider() {
     let slider: CanvasRenderingContext2D = this.slider.nativeElement.getContext('2d')
-    let sliderGradient: CanvasGradient = slider.createLinearGradient(0,0, slider.canvas.width, 0)
+    let sliderGradient: CanvasGradient = slider.createLinearGradient(1,0, slider.canvas.width-1, 0)
     sliderGradient.addColorStop(0, '#ff0000')
-    sliderGradient.addColorStop(0.25, '#ffff00')
-    sliderGradient.addColorStop(0.5, '#00ff00')
-    sliderGradient.addColorStop(0.75, '#00ffff')
-    sliderGradient.addColorStop(1, '#0000ff')
+    sliderGradient.addColorStop(0.2, '#ffff00')
+    sliderGradient.addColorStop(0.4, '#00ff00')
+    sliderGradient.addColorStop(0.6, '#00ffff')
+    sliderGradient.addColorStop(0.8, '#0000ff')
+    sliderGradient.addColorStop(1, '#ff0000')
     slider.fillStyle = sliderGradient
     slider.fillRect(0,0,slider.canvas.width, slider.canvas.height)
     this.sliderBuffer = slider.getImageData(0,0, slider.canvas.width, slider.canvas.height)
