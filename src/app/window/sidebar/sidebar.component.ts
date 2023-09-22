@@ -2,7 +2,8 @@ import { Component, HostBinding } from '@angular/core';
 import { FileSystemService } from 'src/app/filesystem/filesystem.service';
 import { DirectoryNode } from 'src/app/filesystem/models/directorynode.model';
 import { EditorService } from '../editor/editor.service';
-import { ColorPickerService } from 'src/app/themes/color-picker/color-picker.service';
+import { ThemeColorService } from '../themes/theme-color.service';
+import { ThemeColor } from '../themes/theme-color.enum';
 
 @Component({
   selector: 'app-sidebar',
@@ -16,7 +17,7 @@ export class SidebarComponent {
   constructor(
     private fileSystem: FileSystemService,
     private editor: EditorService,
-    private colorPicker: ColorPickerService
+    private themeColors: ThemeColorService
     ) {
   }
 
@@ -32,6 +33,10 @@ export class SidebarComponent {
 
   saveCurrentFile() {
     this.editor.saveFile()
+  }
+
+  test() {
+    this.themeColors.setColor(ThemeColor.MAIN_BACKGROUND, "#ffffff")
   }
 
   @HostBinding('style.width') 

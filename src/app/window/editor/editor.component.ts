@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { EditorService } from './editor.service';
+import { FileNode } from 'src/app/filesystem/models/filenode.model';
 
 @Component({
   selector: 'app-editor',
@@ -7,6 +8,8 @@ import { EditorService } from './editor.service';
   styleUrls: ['./editor.component.css']
 })
 export class EditorComponent implements AfterViewInit {
+
+  tabs: FileNode[]
 
   constructor(private editorService: EditorService) {}
 

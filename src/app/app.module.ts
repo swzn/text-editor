@@ -13,7 +13,7 @@ import { BottombarComponent } from './window/bottombar/bottombar.component';
 import { EditorService } from './window/editor/editor.service';
 import { FormsModule } from '@angular/forms';
 import { MenuService } from './window/titlebar/menu.service';
-import { ColorPickerComponent } from './themes/color-picker/color-picker.component';
+import { ColorPickerComponent } from './window/themes/color-picker/color-picker.component';
 
 @NgModule({
   declarations: [

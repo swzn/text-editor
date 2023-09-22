@@ -12,5 +12,11 @@ body {
 
 :root {
     --theme-main-bg: #4a5766;
+    --theme-scrollbar-bg: #6c7e94;
+    --theme-scrollbar-thumb: #57677a;
+    --theme-scrollbar-thumb-hover: #4a5766;
+    --theme-sidebar-bg: #3B434C;
+    --theme-main-text: #84BCAF;
+    --theme-main-text-hover: #84BCAF;
 }
 

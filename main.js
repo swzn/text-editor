@@ -5,23 +5,6 @@ const { IpcChannel } = require('./src/app/ipc/ipc-channels');
 
 let win;
 
-let menu = Menu.buildFromTemplate(
-    [
-        {
-            role: 'editMenu',
-        },
-        {
-            label: 'Dev',
-            submenu: 
-            [
-                {
-                    role: 'toggleDevTools'
-                }
-            ]
-        }
-    ]
-)
-
 
 function workingDirectoryPrompt() {
     let path = dialog.showOpenDialogSync(win, {
@@ -44,6 +27,7 @@ function createWindow() {
             nodeIntegration: true,
             contextIsolation: false
         },
+        minHeight: 500,
         frame: false,
         show: false
     })

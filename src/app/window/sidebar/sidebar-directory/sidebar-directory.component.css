@@ -9,4 +9,5 @@
 
 :host .parent:hover {
     background-color: var(--theme-main-bg);
+    color: var(--theme-main-text-hover);
 }

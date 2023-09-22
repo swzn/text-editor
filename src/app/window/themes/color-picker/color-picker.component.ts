@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
-import { buffer } from 'rxjs';
 
 const CIRCLE_RADIUS: number = 4
 const STROKE_WIDTH: number = 2

@@ -5,9 +5,7 @@
     display: block;
     position: absolute;
     padding: 8px;
-    background-color: rgb(155, 32, 32);
 }
 .canvas-container {
     padding: 5px;
-    background-color: white;
 }

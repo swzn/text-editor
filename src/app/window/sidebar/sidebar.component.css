@@ -2,8 +2,8 @@
     left: 0;
     max-height: 94vh;
     height: 94vh;
-    background-color: #3B434C;
-    color: #84BCAF;
+    background-color: var(--theme-sidebar-bg);
+    color: var(--theme-main-text);
     overflow-y: scroll;
     float: left;
 }
@@ -17,15 +17,15 @@
 }
 
 :host::-webkit-scrollbar-track {
-    background: #6c7e94;
+    background: var(--theme-scrollbar-bg);
 }
 
 :host::-webkit-scrollbar-thumb {
-    background: #57677a;
+    background: var(--theme-scrollbar-thumb);
 }
 
 :host::-webkit-scrollbar-thumb:hover {
-    background: var(--theme-main-bg);
+    background: var(--theme-scrollbar-thumb-hover);
 }
 
 .container {
