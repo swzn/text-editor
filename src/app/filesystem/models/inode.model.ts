@@ -6,5 +6,4 @@ export interface INode {
 
     readonly depth: number;
 
-
 }

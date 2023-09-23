@@ -97,8 +97,6 @@ export class ColorPickerComponent implements AfterViewInit {
 
   mouseup() {
     this.mouseheld = false;
-    console.log(this.colorGradientHue)
-    console.log(this.value)
   }
 
   mousedown(event?: MouseEvent) {
@@ -107,7 +105,6 @@ export class ColorPickerComponent implements AfterViewInit {
   }
 
   private updatePicker() {
-
     const context: CanvasRenderingContext2D = this.picker.nativeElement.getContext('2d')
     const buffer = context.createImageData(context.canvas.width, context.canvas.height)
     const grayscale: Lerp = new Lerp(0,context.canvas.height - 1, 0, 255)
@@ -173,7 +170,11 @@ export class ColorPickerComponent implements AfterViewInit {
     const bufferPosition = this.sliderPosition.y * context.canvas.width * 4 + this.sliderPosition.x * 4
     this.colorGradientHue = this.rgbToHex(this.sliderBuffer.data[bufferPosition], this.sliderBuffer.data[bufferPosition + 1], this.sliderBuffer.data[bufferPosition + 2])
     this.drawCircle(context, this.sliderPosition)
-    this.updatePicker()
+    setTimeout( ()=> {
+      if(this.sliderPosition.x === colorX && this.sliderPosition.y === colorY || 
+        (Math.abs(this.sliderPosition.x - colorX) >= 5 || Math.abs(this.sliderPosition.y - colorY) >= 5) ) this.updatePicker()
+    },
+    5)
     this.refreshColor()
   }
 
