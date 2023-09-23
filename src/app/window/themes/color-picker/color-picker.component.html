@@ -1,6 +1,6 @@
 <div class="container">
-    <span (click)="openPicker()" [style.color]="value"><ng-content></ng-content> {{value}}</span>
-    <div class="parent-container">
+    <span (click)="togglePicker()" [style.color]="value"><ng-content></ng-content></span>
+    <div class="parent-container" [style.display]="pickerToggled" #parent>
         <div class="canvas-container" (click)="setPickerColor($event, true)" (mousemove)="setPickerColor($event)" (mouseleave)="setPickerColor($event); mouseup()" (mousedown)="mousedown()" (mouseup)="mouseup()" (mouseenter)="mousedown($event)">
             <canvas width="400px" height="400px" #picker></canvas>
         </div>

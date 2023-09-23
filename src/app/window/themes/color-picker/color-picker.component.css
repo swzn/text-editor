@@ -1,5 +1,8 @@
 .container {
-    overflow: hidden
+    overflow: hidden;
+}
+.parent-container {
+    position: fixed;
 }
 #picker {
     display: block;

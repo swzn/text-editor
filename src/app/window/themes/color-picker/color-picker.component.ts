@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, Renderer2, ViewChild } from '@angular/core';
 
 const CIRCLE_RADIUS: number = 4
 const STROKE_WIDTH: number = 2
@@ -50,6 +50,10 @@ class Lerp {
 export class ColorPickerComponent implements AfterViewInit {
 
 
+  constructor(private renderer: Renderer2) {
+
+  }
+
   @Input({required: true})
   name: string
 
@@ -82,17 +86,41 @@ export class ColorPickerComponent implements AfterViewInit {
 
   private sliderBuffer : ImageData;
 
-  @Input()
-  pickerToggled: boolean
+  private unlisten: Function
+
+  pickerToggled: string = "none"
 
   @ViewChild('picker') picker: ElementRef;
 
   @ViewChild('slider') slider: ElementRef;
 
+  @ViewChild('parent') parent: ElementRef;
 
+  togglePicker() {
+    
+    const closePicker = () => {
+      console.log('closed')
+      this.pickerToggled = "none"
+      this.unlisten()
+    }
 
-  openPicker() {
-    this.pickerToggled = true
+    const setListener = () => {
+      this.unlisten = this.renderer.listen('window', 'mousedown', (e: MouseEvent) => {
+        const rect:DOMRect = this.parent.nativeElement.getBoundingClientRect() 
+        if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+          closePicker();
+        }
+      })
+    }
+
+    if(this.pickerToggled === "block") {
+      closePicker();
+    }
+    else {
+      this.pickerToggled = "block"
+      setListener()
+    }
+
   }
 
   mouseup() {
