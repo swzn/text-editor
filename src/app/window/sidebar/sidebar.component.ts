@@ -39,8 +39,13 @@ export class SidebarComponent {
     this.themeColors.setColor(ThemeColor.MAIN_BACKGROUND, "#ffffff")
   }
 
-  @HostBinding('style.width') 
-  get width() {
+  @HostBinding('style.max-width') 
+  get maxWidth() {
+    return '300px';
+  }
+
+  @HostBinding('style.min-width') 
+  get minWidth() {
     return '300px';
   }
 

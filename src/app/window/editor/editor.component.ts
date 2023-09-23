@@ -9,9 +9,11 @@ import { FileNode } from 'src/app/filesystem/models/filenode.model';
 })
 export class EditorComponent implements AfterViewInit {
 
-  tabs: FileNode[]
+  tabs: Set<FileNode> 
 
-  constructor(private editorService: EditorService) {}
+  constructor(private editorService: EditorService) {
+    this.tabs = new Set<FileNode>
+  }
 
   @Input('ngModel')
   content: any

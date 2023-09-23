@@ -27,6 +27,7 @@ export class SidebarFileComponent {
   async requestFile() {
     const fileContents = await this.fileSystem.getFileContents(this.file.path)
     this.editor.setData(fileContents);
+    this.editor.addTab(this.file);
   }
   
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { EditorComponent } from './editor.component';
 import { IpcService } from 'src/app/ipc/ipc.service';
 import { IpcChannel } from 'src/app/ipc/ipc-channels';
+import { FileNode } from 'src/app/filesystem/models/filenode.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -24,6 +25,10 @@ export class EditorService {
 
   saveFile() {
     this.ipcService.invoke(IpcChannel.SaveFile, this.getData())
+  }
+
+  addTab(f: FileNode) {
+    this.component.tabs.add(f)
   }
 
 }

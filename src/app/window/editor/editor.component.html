@@ -1,4 +1,12 @@
-<div class="tab-container">
-    <ng-container *ngFor="let tab of tabs"></ng-container>
+<div class="tab-container thin-scroll" >
+    <ng-container *ngFor="let tab of tabs"
+        [ngTemplateOutlet]="tabTemplate"
+        [ngTemplateOutletContext]="{fileNode: tab}">
+    </ng-container>
 </div>
-<textarea id="editor" [(ngModel)]="content" linebreak="false"></textarea>
+<textarea id="editor" [(ngModel)]="content" linebreak="false" spellcheck="false"></textarea>
+
+
+<ng-template #tabTemplate let-fileNode="fileNode">
+    <div class="tab"><span>{{fileNode.name}}</span></div>
+</ng-template>

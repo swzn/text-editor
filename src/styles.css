@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 body {
     background-color: #eee;
+    scrollbar-gutter: stable;
 }
 
 * {
@@ -14,9 +15,54 @@ body {
     --theme-main-bg: #4a5766;
     --theme-scrollbar-bg: #6c7e94;
     --theme-scrollbar-thumb: #57677a;
-    --theme-scrollbar-thumb-hover: #4a5766;
+    --theme-scrollbar-thumb-hover: #384553;
     --theme-sidebar-bg: #3B434C;
     --theme-main-text: #84BCAF;
     --theme-main-text-hover: #84BCAF;
+    --theme-border: #8ca3bd;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--theme-scrollbar-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--theme-scrollbar-thumb);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-scrollbar-thumb-hover);
+}
+
+.thin-scroll::-webkit-scrollbar {
+    height: 3px;
+    opacity: 0;
+    transition: 3s opacity;
+    transition-timing-function: ease-in-out;
+}
+
+.thin-scroll:hover::-webkit-scrollbar {
+    opacity: 1;
+    transition-delay: 2s;
+}
+
+.thin-scroll::-webkit-scrollbar-track {
+    opacity: 0;
+}
+
+.thin-scroll::-webkit-scrollbar-thumb {
+    opacity: 0;
+    transition: 3s opacity;
+    transition-timing-function: ease-in-out;
+    background: var(--theme-scrollbar-thumb);
+}
+
+.thin-scroll::-webkit-scrollbar-thumb:hover {
+    opacity: 1;
+    background: var(--theme-scrollbar-thumb-hover);
 }
 
