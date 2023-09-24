@@ -1,7 +1,6 @@
 import { Component, HostListener, Input } from '@angular/core';
-import { FileNode } from '../../../filesystem/models/filenode.model';
+import { FileNode } from '../../../filesystem/models/filenode.type';
 import { FileSystemService } from 'src/app/filesystem/filesystem.service';
-import { EditorComponent } from '../../editor/editor.component';
 import { EditorService } from '../../editor/editor.service';
 
 @Component({

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { IpcService } from '../ipc/ipc.service';
 import { IpcChannel } from '../ipc/ipc-channels';
-import { DirectoryNode } from './models/directorynode.model';
-import { FileNode } from './models/filenode.model';
+import { DirectoryNode } from './models/directorynode.type';
+import { FileNode } from './models/filenode.type';
 
 @Injectable({
   providedIn: 'root'

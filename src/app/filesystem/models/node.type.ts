@@ -1,4 +1,4 @@
-export interface INode {
+export interface Node {
 
     readonly path: string;
 

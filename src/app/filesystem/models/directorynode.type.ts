@@ -1,7 +1,7 @@
-import { FileNode } from "./filenode.model";
-import { INode } from "./inode.model";
+import { FileNode } from "./filenode.type";
+import { Node } from "./node.type";
 
-export class DirectoryNode implements INode {
+export class DirectoryNode implements Node {
 
 
     readonly path: string;
