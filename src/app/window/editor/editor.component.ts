@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { EditorService } from './editor.service';
-import { SidebarFileComponent } from '../sidebar/sidebar-file/sidebar-file.component';
+import { FileNode } from 'src/app/types/filenode.type';
+import { TabElement } from '../../types/tabelement.type';
+import { FileSystemService } from 'src/app/filesystem/filesystem.service';
 
 @Component({
   selector: 'app-editor',
@@ -9,10 +11,16 @@ import { SidebarFileComponent } from '../sidebar/sidebar-file/sidebar-file.compo
 })
 export class EditorComponent implements AfterViewInit {
 
-  tabs: Set<SidebarFileComponent> 
+  tabs: Set<FileNode>
+  tabElements: {[path: string]: TabElement}
 
-  constructor(private editorService: EditorService) {
-    this.tabs = new Set<SidebarFileComponent>
+  constructor(
+    private editorService: EditorService,
+    private fileSystem: FileSystemService
+    )
+    {
+    this.tabs = new Set<FileNode>
+    this.tabElements = {}
   }
 
   @Input('ngModel')
@@ -22,15 +30,24 @@ export class EditorComponent implements AfterViewInit {
     this.editorService.component = this;
   }
 
-  setFocus(file: SidebarFileComponent, parent: HTMLDivElement) {
-    file.requestFile()
-    this.resetActiveTab()
-    parent.setAttribute("id", "activeTab")
+  async setFocus(file: FileNode) {
+    this.content = await this.fileSystem.getFileContents(file.path)
   }
 
   resetActiveTab() {
     const previousActive = document.getElementById("activeTab")
     if(previousActive) previousActive.id = ""
+  }
+
+  getTab(file: FileNode): TabElement | undefined {
+    if(this.tabs.has(file)) return this.tabElements[file.path]
+    return undefined
+  }
+
+  addTab(file: FileNode, focus: boolean = true) {
+    this.tabs.add(file)
+    this.tabElements[file.path] = new TabElement(file)
+    if(focus) this.setFocus(file)
   }
 
 }

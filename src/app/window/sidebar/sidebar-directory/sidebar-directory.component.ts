@@ -1,5 +1,5 @@
 import { Component, HostListener, Input } from '@angular/core';
-import { DirectoryNode } from 'src/app/filesystem/models/directorynode.type';
+import { DirectoryNode } from 'src/app/types/directorynode.type';
 
 @Component({
   selector: 'app-sidebar-directory',

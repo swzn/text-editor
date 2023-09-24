@@ -1,6 +1,6 @@
 import { Component, HostBinding } from '@angular/core';
 import { FileSystemService } from 'src/app/filesystem/filesystem.service';
-import { DirectoryNode } from 'src/app/filesystem/models/directorynode.type';
+import { DirectoryNode } from 'src/app/types/directorynode.type';
 import { EditorService } from '../editor/editor.service';
 import { ThemeColorService } from '../themes/theme-color.service';
 import { ThemeColor } from '../themes/theme-color.enum';
