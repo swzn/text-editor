@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { EditorService } from './editor.service';
-import { FileNode } from 'src/app/filesystem/models/filenode.model';
+import { SidebarFileComponent } from '../sidebar/sidebar-file/sidebar-file.component';
 
 @Component({
   selector: 'app-editor',
@@ -9,10 +9,10 @@ import { FileNode } from 'src/app/filesystem/models/filenode.model';
 })
 export class EditorComponent implements AfterViewInit {
 
-  tabs: Set<FileNode> 
+  tabs: Set<SidebarFileComponent> 
 
   constructor(private editorService: EditorService) {
-    this.tabs = new Set<FileNode>
+    this.tabs = new Set<SidebarFileComponent>
   }
 
   @Input('ngModel')
@@ -20,6 +20,10 @@ export class EditorComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.editorService.component = this;
+  }
+
+  setFocus(file: SidebarFileComponent) {
+    file.requestFile()
   }
 
 }

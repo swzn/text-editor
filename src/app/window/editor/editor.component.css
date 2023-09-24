@@ -24,6 +24,10 @@
     padding: 0 5px;
 }
 
+.tab:hover {
+    background-color: #6c7e94;
+}
+
 .tab span {
     text-overflow: ellipsis;
     overflow: hidden;

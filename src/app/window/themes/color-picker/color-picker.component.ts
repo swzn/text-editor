@@ -97,7 +97,7 @@ export class ColorPickerComponent implements AfterViewInit {
   @ViewChild('parent') parent: ElementRef;
 
   togglePicker() {
-    
+
     const closePicker = () => {
       console.log('closed')
       this.pickerToggled = "none"
@@ -152,7 +152,7 @@ export class ColorPickerComponent implements AfterViewInit {
          buffer.data[basepixel + 3] = 255
        }
      }
-    
+
     context.putImageData(buffer, 0, 0)
 
     this.pickerBuffer = buffer;

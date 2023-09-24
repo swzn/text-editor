@@ -3,6 +3,8 @@ import { EditorComponent } from './editor.component';
 import { IpcService } from 'src/app/ipc/ipc.service';
 import { IpcChannel } from 'src/app/ipc/ipc-channels';
 import { FileNode } from 'src/app/filesystem/models/filenode.model';
+import { SidebarComponent } from '../sidebar/sidebar.component';
+import { SidebarFileComponent } from '../sidebar/sidebar-file/sidebar-file.component';
 @Injectable({
   providedIn: 'root'
 })
@@ -27,7 +29,7 @@ export class EditorService {
     this.ipcService.invoke(IpcChannel.SaveFile, this.getData())
   }
 
-  addTab(f: FileNode) {
+  addTab(f: SidebarFileComponent) {
     this.component.tabs.add(f)
   }
 
