@@ -8,7 +8,7 @@
 
 
 <ng-template #tabTemplate let-fileNode="fileNode">
-    <div class="tab">
-        <span (click)="setFocus(fileNode)">{{fileNode.file.name}}</span>
+    <div class="tab" id="activeTab" #parentDiv>
+        <span (click)="setFocus(fileNode, parentDiv)">{{fileNode.file.name}}</span>
     </div>
 </ng-template>

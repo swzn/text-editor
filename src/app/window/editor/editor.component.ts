@@ -22,8 +22,15 @@ export class EditorComponent implements AfterViewInit {
     this.editorService.component = this;
   }
 
-  setFocus(file: SidebarFileComponent) {
+  setFocus(file: SidebarFileComponent, parent: HTMLDivElement) {
     file.requestFile()
+    this.resetActiveTab()
+    parent.setAttribute("id", "activeTab")
+  }
+
+  resetActiveTab() {
+    const previousActive = document.getElementById("activeTab")
+    if(previousActive) previousActive.id = ""
   }
 
 }

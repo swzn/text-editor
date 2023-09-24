@@ -28,6 +28,7 @@ export class EditorService {
   }
 
   addTab(f: SidebarFileComponent) {
+    this.component.resetActiveTab()
     this.component.tabs.add(f)
   }
 
