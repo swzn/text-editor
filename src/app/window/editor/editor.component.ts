@@ -44,7 +44,6 @@ export class EditorComponent {
     const fileContents = await this.fileSystem.getFileContents(file.path)
     this.content = fileContents
     this.removeCarriageReturn()
-    console.log({content:this.content})
     this.focusedTab = file.path
     this.tabElements[file.path].element?.classList.add("active")
     this.hash.sha1(this.content, (fileHash) =>{  this.tabElements[file.path].originalHash = fileHash})
@@ -90,11 +89,12 @@ export class EditorComponent {
 
   checkChange() {
     const currentPath = this.focusedTab
-    this.hash.sha1(this.content, 
+    const snapshot = this.content
+    this.hash.sha1(snapshot, 
         (fileHash) => {
           if(!currentPath || !this.tabElements[currentPath]) return
           this.tabElements[currentPath].edited = (fileHash === this.tabElements[currentPath].originalHash) ? "" : "modified"
-          console.log({content:this.content})
+          this.editorService.saveFile(this.fileSystem.getRoamingDirectory() + "\\" + this.tabElements[currentPath].id, snapshot)
         }
       )
   }

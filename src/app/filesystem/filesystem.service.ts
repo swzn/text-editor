@@ -9,8 +9,21 @@ import { FileNode } from '../types/filenode.type';
 })
 export class FileSystemService {
 
-  constructor(private ipcService: IpcService) { 
+  private roamingDirectory: string;
 
+  constructor(private ipcService: IpcService) { 
+    this.assignRoamingDirectory()
+  }
+
+  async assignRoamingDirectory() {
+    this.ipcService.invoke(IpcChannel.GetRoamingDirectory).then((result)=> {
+      this.roamingDirectory = result;
+      console.log(this.roamingDirectory)
+    })
+  }
+
+  getRoamingDirectory() {
+    return this.roamingDirectory
   }
 
   getWorkingDirectory() {
@@ -21,7 +34,7 @@ export class FileSystemService {
 
   async getFileContents(filePath: string): Promise<string> {
     let fileContents: string = ""
-    await this.ipcService.invoke(IpcChannel.GetFile, filePath).then((result: string) => fileContents = result)
+    await this.ipcService.invoke(IpcChannel.GetFile, filePath).then((result) => fileContents = result)
     return fileContents
   }
 

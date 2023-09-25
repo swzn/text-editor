@@ -32,11 +32,7 @@ export class SidebarComponent {
   }
 
   saveCurrentFile() {
-    this.editor.saveFile()
-  }
-
-  test() {
-    this.themeColors.setColor(ThemeColor.MAIN_BACKGROUND, "#ffffff")
+    this.editor.saveFilePrompt()
   }
 
   @HostBinding('style.max-width') 

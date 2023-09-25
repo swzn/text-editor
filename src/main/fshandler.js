@@ -6,6 +6,7 @@ const MAX_DEPTH = 10;
 module.exports.recurse = recurse
 module.exports.getFileFromPath = getFileFromPath
 module.exports.saveFile = saveFile
+module.exports.getTempDirectory = getTempDirectory
 
 function saveFile(path, contents) {
     fs.writeFileSync(path, contents)
@@ -19,6 +20,14 @@ async function getFileFromPath(path) {
     catch (err) {
         console.log(err)
     }
+}
+
+async function getTempDirectory(temp) {
+    const appTemp = path.join(temp, "text-editor")
+    if(!fs.existsSync(appTemp)) {
+        fs.mkdirSync(appTemp)
+    }
+    return appTemp
 }
 
 function recurse(root, depth) {

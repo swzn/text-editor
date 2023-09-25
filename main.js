@@ -1,5 +1,5 @@
-const {app, BrowserWindow, Menu, dialog, ipcMain} = require('electron');
-
+const {app, BrowserWindow, dialog, ipcMain} = require('electron');
+const path = require('path')
 const fshandler = require('./src/main/fshandler');
 const { IpcChannel } = require('./src/app/ipc/ipc-channels');
 
@@ -51,6 +51,12 @@ function createWindow() {
         }
     ))
 
+    ipcMain.handle(IpcChannel.GetRoamingDirectory.toString(),
+        (e) => {
+            return app.getPath('userData')
+        }
+    )
+
     ipcMain.handle(IpcChannel.GetFile.toString(), (
         async (e, args) => {
             const result = await fshandler.getFileFromPath(args[0])
@@ -58,7 +64,7 @@ function createWindow() {
         }
     ))
 
-    ipcMain.handle(IpcChannel.SaveFile.toString(),
+    ipcMain.handle(IpcChannel.SaveFilePrompt.toString(),
         (e, data) => {
             if(data === undefined || data === null || data.length === 0 || data[0] === undefined || data[0] === null) return false
             const savePath = dialog.showSaveDialogSync(null, {
@@ -70,6 +76,14 @@ function createWindow() {
             return true
         }
     )
+
+    ipcMain.handle(IpcChannel.SaveFile.toString(),
+    (e, data) => {
+        if(data === undefined || data[0] === undefined || data[0].data === undefined || data[0].path === undefined) return false
+        fshandler.saveFile(data[0].path, data[0].data)
+        return true
+    }
+)
 
 
     ipcMain.on(IpcChannel.Maximize, 

@@ -27,8 +27,13 @@ export class EditorService {
     return this.component.content;
   }
 
-  saveFile() {
-    this.ipcService.invoke(IpcChannel.SaveFile, this.getData())
+  saveFile(path: string, data: string) {
+    this.ipcService.invoke(IpcChannel.SaveFile, {data: data, path:path})
+    console.log('saving file at ' + path)
+  }
+
+  saveFilePrompt() {
+    this.ipcService.invoke(IpcChannel.SaveFilePrompt, this.getData())
   }
 
 
