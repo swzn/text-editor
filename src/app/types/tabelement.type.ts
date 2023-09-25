@@ -3,9 +3,10 @@ import { FileNode } from "src/app/types/filenode.type"
 
 export class TabElement {
     file: FileNode
+    originalHash: string
+    edited: string = ""
     position?: number
     element?: HTMLElement
-    edited?: boolean
 
     constructor(file: FileNode) {
         this.file = file

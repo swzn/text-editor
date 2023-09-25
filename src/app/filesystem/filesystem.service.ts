@@ -19,9 +19,9 @@ export class FileSystemService {
     return dn
   }
 
-  async getFileContents(filePath: string) {
-    let fileContents;
-    await this.ipcService.invoke(IpcChannel.GetFile, filePath).then((result) => fileContents = result)
+  async getFileContents(filePath: string): Promise<string> {
+    let fileContents: string = ""
+    await this.ipcService.invoke(IpcChannel.GetFile, filePath).then((result: string) => fileContents = result)
     return fileContents
   }
 

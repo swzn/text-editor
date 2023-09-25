@@ -42,6 +42,7 @@ body {
 
 .thin-scroll::-webkit-scrollbar {
     height: 3px;
+    width: 3px;
     opacity: 0;
     transition: 3s opacity;
     transition-timing-function: ease-in-out;

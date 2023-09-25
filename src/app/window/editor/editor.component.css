@@ -1,6 +1,8 @@
 :host {
     flex-grow: 1;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .tab-container {
@@ -14,6 +16,10 @@
     white-space: nowrap;
     scrollbar-gutter: stable;
     user-select: none;
+}
+
+.modified {
+    color: #bebc18;
 }
 
 .tab {

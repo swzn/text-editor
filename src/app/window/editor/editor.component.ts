@@ -27,7 +27,9 @@ export class EditorComponent {
   }
 
   @Input('ngModel')
-  content: any
+  content: string
+
+  original: any
 
   tabs: Set<FileNode>
 
@@ -37,9 +39,13 @@ export class EditorComponent {
 
   async setFocus(file: FileNode) {
     this.resetActiveTab()
-    this.content = await this.fileSystem.getFileContents(file.path)
+    const fileContents = await this.fileSystem.getFileContents(file.path)
+    this.content = fileContents
+    this.removeCarriageReturn()
+    console.log({content:this.content})
     this.focusedTab = file.path
     this.tabElements[file.path].element?.classList.add("active")
+    this.hash.sha1(this.content, (fileHash) =>{  this.tabElements[file.path].originalHash = fileHash})
   }
 
   resetActiveTab() {
@@ -75,14 +81,24 @@ export class EditorComponent {
     }
   }
 
-  checkChange(event: any) {
+  checkChange() {
+    const currentPath = this.focusedTab
     this.hash.sha1(this.content, 
-        (fileHash) => (
-          console.log(fileHash)
-        )
+        (fileHash) => {
+          if(!currentPath || !this.tabElements[currentPath]) return
+          this.tabElements[currentPath].edited = (fileHash === this.tabElements[currentPath].originalHash) ? "" : "modified"
+          console.log({content:this.content})
+        }
       )
   }
 
+  getTabTitle(filePath: string) {
+    if(!this.tabElements[filePath].edited) return filePath
+    return filePath + " - Modified"
+  }
 
+  removeCarriageReturn() {
+    this.content = this.content.replace(/\r/gm,'');
+  }
 
 }
