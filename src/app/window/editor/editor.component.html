@@ -1,14 +1,16 @@
-<div class="tab-container thin-scroll" >
+<div class="tab-container thin-scroll" #tabContainer>
     <ng-container *ngFor="let tab of tabs"
         [ngTemplateOutlet]="tabTemplate"
         [ngTemplateOutletContext]="{fileNode: tab}">
     </ng-container>
 </div>
-<textarea id="editor" [(ngModel)]="content" linebreak="false" spellcheck="false"></textarea>
+<!-- <textarea id="editor" [(ngModel)]="content" linebreak="false" spellcheck="false" (input)="checkChange($event)"></textarea> -->
+<textarea id="editor" linebreak="false" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">{{content}}</textarea>
 
 
 <ng-template #tabTemplate let-fileNode="fileNode">
-    <div class="tab">
-        <span (click)="setFocus(fileNode)">{{fileNode.name}}</span>
+    <div class="tab" [title]="fileNode.path" [id]="fileNode.path" (click)="setFocus(fileNode)" (dblclick)="removeTab(fileNode)">
+        <span>{{fileNode.name}}</span>
+        <!-- <div class="tab-tooltip"><span>{{fileNode.path}}</span></div> -->
     </div>
 </ng-template>

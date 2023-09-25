@@ -8,10 +8,12 @@
     height: 30px;
     background-color: var(--theme-main-bg);
     border-bottom: 1.5px solid var(--theme-border); 
-    overflow-x: none;
+    overflow-x: auto;
+    flex-wrap: wrap;
     overflow-y: hidden;
     white-space: nowrap;
     scrollbar-gutter: stable;
+    user-select: none;
 }
 
 .tab {
@@ -20,20 +22,33 @@
     max-width: 150px;
     overflow: hidden;
     display: inline-flex;
-    align-items: center;
     padding: 0 5px;
-    box-sizing: border-box;
+    align-items: center;
     border-right: 1px solid var(--theme-border);
+    cursor: pointer;
+    position: relative;
 }
 
 .tab:hover {
-    background-color: #6c7e94;
+    background-color: var(--theme-main-bg-hover);
 }
 
-#activeTab {
+.tab-tooltip {
+    position: fixed;
+    display: none;
+    background-color: var(--theme-tooltip-bg);
+    z-index: 10;
+    top: calc(max(3vh, 20px) + 30px)
+}
+
+.tab:hover .tab-tooltip {
+    display: block;
+    transition-delay: 2s;
+}
+
+.active {
     background-color: #6c7e94;
-    border-top: 1px solid #8ee76b;
-    z-index: 1000;
+    box-shadow: inset 0px 3px #8ee76b;
 }
 
 .tab span {
