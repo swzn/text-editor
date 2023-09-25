@@ -38,7 +38,9 @@ export class EditorComponent {
   focusedTab: string | undefined
 
   async setFocus(file: FileNode) {
+    this.unfocusCurrentTab()
     this.resetActiveTab()
+    
     const fileContents = await this.fileSystem.getFileContents(file.path)
     this.content = fileContents
     this.removeCarriageReturn()
@@ -46,6 +48,11 @@ export class EditorComponent {
     this.focusedTab = file.path
     this.tabElements[file.path].element?.classList.add("active")
     this.hash.sha1(this.content, (fileHash) =>{  this.tabElements[file.path].originalHash = fileHash})
+  }
+
+  async unfocusCurrentTab() {
+    const currentTab = this.focusedTab
+
   }
 
   resetActiveTab() {

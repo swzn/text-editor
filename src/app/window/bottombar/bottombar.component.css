@@ -5,9 +5,7 @@
     min-height: 20px;
     background-color: var(--theme-main-bg);
     display: block;
-    position: fixed;
     width: 100%;
-    bottom: 0;
     z-index: 100;
     border-top: 1px solid var(--theme-border);
 }

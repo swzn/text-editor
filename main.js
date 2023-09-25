@@ -27,6 +27,7 @@ function createWindow() {
             nodeIntegration: true,
             contextIsolation: false
         },
+        minWidth: 500,
         minHeight: 500,
         frame: false,
         show: false

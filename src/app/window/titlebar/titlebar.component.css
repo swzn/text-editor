@@ -7,8 +7,6 @@
     display: block;
     user-select: none;
     -webkit-app-region: drag;
-    top: 0;
-    position: fixed;
     width: 100%;
     border-bottom: 1.5px solid var(--theme-border); 
     z-index: 100;
