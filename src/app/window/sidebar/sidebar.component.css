@@ -2,7 +2,6 @@
     background-color: var(--theme-sidebar-bg);
     color: var(--theme-main-text);
     overflow-y: scroll;
-    float: left;
 }
 
 :host ::ng-deep {

@@ -1,0 +1,11 @@
+<ng-container *ngFor="let icon of icons"
+[ngTemplateOutlet]="iconTemplate"
+[ngTemplateOutletContext]="{icon: icon}">
+</ng-container>
+<ng-template let-icon="icon" #iconTemplate>
+    <div class="icon-container">
+        <svg xmlns="http://www.w3.org/2000/svg" [attr.id]="icon.id" [attr.data-name]="icon.id" [attr.viewBox]="icon.viewBox" *ngFor="let path of icon.paths">
+            <path [attr.d]="path.d" [attr.transform]="path.transform"/>
+        </svg>
+    </div>
+</ng-template>

@@ -14,7 +14,6 @@ export class EditorService {
   private backupDir: string = "";
   
   constructor(
-    private ipcService: IpcService,
     private fileSystem: FileSystemService
   ) { 
   }
@@ -28,27 +27,17 @@ export class EditorService {
     }
   }
 
-  getData() {
-    return this.component.content;
-  }
-
   async getFileContents(path: string) {
     return await this.fileSystem.getFileContents(path)
   }
 
   saveTempFile(id: string, snapshot: string) {
-    
     const tempPath = this.fileSystem.joinPaths(this.getBackupDir(), id)
-    console.log(tempPath)
-    this.saveFile(tempPath, snapshot)
+    this.fileSystem.saveFile(tempPath, snapshot)
   }
 
-  private saveFile(path: string, data: string) {
-    this.ipcService.invoke(IpcChannel.SaveFile, {data: data, path:path})
-  }
-
-  saveFilePrompt() {
-    this.ipcService.invoke(IpcChannel.SaveFilePrompt, this.getData())
+  saveFilePrompt(data: string) {
+    this.fileSystem.saveFilePrompt(data)
   }
 
   getBackupDir(): string {

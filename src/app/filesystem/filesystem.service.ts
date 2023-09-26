@@ -62,5 +62,13 @@ export class FileSystemService {
       for(let name of path.split('/')) final.push(name)
     }
     return final.join("\\")
+  }
+
+  saveFile(path: string, data: string){
+    this.ipcService.invoke(IpcChannel.SaveFile, {data: data, path:path})
+  }
+
+  saveFilePrompt(data: string) {
+    this.ipcService.invoke(IpcChannel.SaveFilePrompt, data)
   } 
 }

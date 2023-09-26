@@ -31,10 +31,6 @@ export class SidebarComponent {
     return this.workingDirectory
   }
 
-  saveCurrentFile() {
-    this.editor.saveFilePrompt()
-  }
-
   @HostBinding('style.max-width') 
   get maxWidth() {
     return '300px';

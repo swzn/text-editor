@@ -1,6 +1,5 @@
 <div class="container">
     <button (click)="getWorkingDirectory()">Click me</button>
-    <button (click)="saveCurrentFile()">Save file</button>
     <app-color-picker name="Main background">Main background</app-color-picker>
     <ng-container *ngIf="workingDirectory">
         <app-sidebar-directory [directory]="workingDirectory">

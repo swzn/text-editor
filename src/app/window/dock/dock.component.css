@@ -1,0 +1,36 @@
+:host {
+    background-color: var(--theme-dock-bg);
+    width: 50px;
+    border-right: 1px solid var(--theme-border);
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.icon-container {
+    width: 100%;
+    height: 50px;
+    box-sizing: border-box;
+    position: relative;
+}
+.icon-container svg {
+    overflow: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 10px 10px 0 10px;
+    box-sizing: border-box;
+}
+.icon-container path {
+    fill: none;
+    stroke: #231f20;
+    stroke-miterlimit: 10;
+    stroke-width: 10px;
+    fill-rule: evenodd;
+}
+
+.icon-container:hover path {
+    stroke: #635d5f;
+}

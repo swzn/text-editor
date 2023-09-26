@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './window/sidebar/sidebar.component';
@@ -14,6 +14,7 @@ import { EditorService } from './window/editor/editor.service';
 import { FormsModule } from '@angular/forms';
 import { MenuService } from './window/titlebar/menu.service';
 import { ColorPickerComponent } from './window/themes/color-picker/color-picker.component';
+import { DockComponent } from './window/dock/dock.component';
 
 @NgModule({
   declarations: [
@@ -25,16 +26,18 @@ import { ColorPickerComponent } from './window/themes/color-picker/color-picker.
     TitlebarComponent,
     BottombarComponent,
     ColorPickerComponent,
+    DockComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule,
   ],
   providers: [
     IpcService,
     EditorService,
-    MenuService,
+    MenuService
   ],
   bootstrap: [AppComponent]
 })
