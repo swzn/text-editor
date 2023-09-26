@@ -99,7 +99,6 @@ export class ColorPickerComponent implements AfterViewInit {
   togglePicker() {
 
     const closePicker = () => {
-      console.log('closed')
       this.pickerToggled = "none"
       this.unlisten()
     }

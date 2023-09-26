@@ -1,8 +1,7 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { EditorService } from './editor.service';
 import { FileNode } from 'src/app/types/filenode.type';
 import { TabElement } from '../../types/tabelement.type';
-import { FileSystemService } from 'src/app/filesystem/filesystem.service';
 import { HashService } from 'src/app/filesystem/hash.service';
 
 const MAX_ATTEMPT = 10;
@@ -17,7 +16,6 @@ export class EditorComponent {
 
   constructor(
     private editorService: EditorService,
-    private fileSystem: FileSystemService,
     private hash: HashService
     )
     {
@@ -41,7 +39,7 @@ export class EditorComponent {
     this.unfocusCurrentTab()
     this.resetActiveTab()
     
-    const fileContents = await this.fileSystem.getFileContents(file.path)
+    const fileContents = await this.editorService.getFileContents(file.path)
     this.content = fileContents
     this.removeCarriageReturn()
     this.focusedTab = file.path
@@ -94,7 +92,7 @@ export class EditorComponent {
         (fileHash) => {
           if(!currentPath || !this.tabElements[currentPath]) return
           this.tabElements[currentPath].edited = (fileHash === this.tabElements[currentPath].originalHash) ? "" : "modified"
-          this.editorService.saveFile(this.fileSystem.getRoamingDirectory() + "\\" + this.tabElements[currentPath].id, snapshot)
+          this.editorService.saveTempFile(this.tabElements[currentPath].id, snapshot)
         }
       )
   }

@@ -18,7 +18,6 @@ export class FileSystemService {
   async assignRoamingDirectory() {
     this.ipcService.invoke(IpcChannel.GetRoamingDirectory).then((result)=> {
       this.roamingDirectory = result;
-      console.log(this.roamingDirectory)
     })
   }
 
@@ -55,4 +54,13 @@ export class FileSystemService {
     });
     return root;
   }
+
+  joinPaths(...paths:string[]) {
+    let final: string[] = []
+    for(let path of paths) {
+      path.replaceAll('/', '\\')
+      for(let name of path.split('/')) final.push(name)
+    }
+    return final.join("\\")
+  } 
 }

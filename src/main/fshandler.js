@@ -3,13 +3,24 @@ const fsPromises = require('fs/promises')
 const path = require('path')
 const MAX_DEPTH = 10;
 
-module.exports.recurse = recurse
-module.exports.getFileFromPath = getFileFromPath
-module.exports.saveFile = saveFile
-module.exports.getTempDirectory = getTempDirectory
+module.exports = {
+    recurse,
+    getFileFromPath,
+    saveFile,
+    getTempDirectory
+}
 
 function saveFile(path, contents) {
-    fs.writeFileSync(path, contents)
+    const directories = path.split('\\')
+    const parent = directories.slice(0, directories.length - 1).join("\\")
+    console.log(parent)
+    console.log(path)
+    if(!fs.existsSync(parent)) {
+        fs.mkdirSync(parent, {recursive: true})
+    }
+    fsPromises.writeFile(path, contents).catch( (err) => {
+        console.log(err)
+    })
 }
 
 async function getFileFromPath(path) {
