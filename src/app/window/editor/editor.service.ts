@@ -1,7 +1,5 @@
-import { AfterViewInit, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { EditorComponent } from './editor.component';
-import { IpcService } from 'src/app/ipc/ipc.service';
-import { IpcChannel } from 'src/app/ipc/ipc-channels';
 import { FileNode } from 'src/app/types/filenode.type';
 import { FileSystemService } from 'src/app/filesystem/filesystem.service';
 @Injectable({

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { EnvironmentService } from './filesystem/environment.service';
+import { DockService } from './window/dock/dock.service';
+import { Events } from './types/events.type';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +10,7 @@ import { EnvironmentService } from './filesystem/environment.service';
 export class AppComponent {
   title = 'text-editor';
 
+  events = Events
+  constructor() {
+  }
 }

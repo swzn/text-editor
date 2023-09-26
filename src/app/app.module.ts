@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { MenuService } from './window/titlebar/menu.service';
 import { ColorPickerComponent } from './window/themes/color-picker/color-picker.component';
 import { DockComponent } from './window/dock/dock.component';
+import { DockService } from './window/dock/dock.service';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { DockComponent } from './window/dock/dock.component';
   providers: [
     IpcService,
     EditorService,
-    MenuService
+    MenuService,
+    DockService
   ],
   bootstrap: [AppComponent]
 })

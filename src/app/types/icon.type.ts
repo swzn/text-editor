@@ -1,4 +1,4 @@
-export class DockIcon {
+export class Icon {
     id: string
     viewBox: string;
     paths: {

@@ -4,6 +4,7 @@ import { DirectoryNode } from 'src/app/types/directorynode.type';
 import { EditorService } from '../editor/editor.service';
 import { ThemeColorService } from '../themes/theme-color.service';
 import { ThemeColor } from '../themes/theme-color.enum';
+import { DockService } from '../dock/dock.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,11 +15,15 @@ export class SidebarComponent {
 
   workingDirectory: DirectoryNode;
 
+  display: string;
+
   constructor(
     private fileSystem: FileSystemService,
+    private dockService: DockService,
     private editor: EditorService,
     private themeColors: ThemeColorService
     ) {
+      this.dockService.bindSidebar(this)
   }
 
   refreshWorkingDirectory() {
@@ -39,6 +44,16 @@ export class SidebarComponent {
   @HostBinding('style.min-width') 
   get minWidth() {
     return '300px';
+  }
+
+  @HostBinding('style.display') 
+  get displayToggled() {
+    return this.display
+  }
+
+  toggle() {
+    console.log('toggled')
+    this.display = this.display === "none" ? this.display = "block" : "none";
   }
 
 }

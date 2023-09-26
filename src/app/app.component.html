@@ -1,7 +1,9 @@
 <main>
 <app-titlebar></app-titlebar>
 <div class="container">
-    <app-dock></app-dock>
+    <app-dock [template]="
+    [{icon: 'folder', event: events.TOGGLE_SIDEBAR}, {icon: 'folder'}, {icon: 'bookmark2'}, {icon: 'bookmark2'}, {icon: 'test'}]
+    "></app-dock>
     <app-sidebar></app-sidebar>
     <app-editor></app-editor>
 </div>
