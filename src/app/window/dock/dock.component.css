@@ -30,6 +30,9 @@
     stroke-width: 10px;
     fill-rule: evenodd;
 }
+.icon-container:focus path {
+    stroke: #9c3751;
+}
 
 .icon-container:hover path {
     stroke: #635d5f;

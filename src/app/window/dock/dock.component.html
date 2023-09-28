@@ -1,9 +1,9 @@
 <ng-container *ngFor="let item of items"
 [ngTemplateOutlet]="iconTemplate"
-[ngTemplateOutletContext]="{icon: item.icon, event: item.event}">
+[ngTemplateOutletContext]="{icon: item.icon, callback: item.callback}">
 </ng-container>
-<ng-template let-icon="icon" let-event="event" #iconTemplate>
-    <div class="icon-container" (click)="handle(event)">
+<ng-template let-icon="icon" let-callback="callback" #iconTemplate>
+    <div class="icon-container" (click)="callback()">
         <svg xmlns="http://www.w3.org/2000/svg" [attr.id]="icon.id" [attr.data-name]="icon.id" [attr.viewBox]="icon.viewBox" *ngFor="let path of icon.paths">
             <path [attr.d]="path.d" [attr.transform]="path.transform"/>
         </svg>

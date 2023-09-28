@@ -11,27 +11,31 @@ import { DockService } from './dock.service';
 })
 export class DockComponent implements OnInit {
   
-  @Input({required: true})
-  template: {
-    icon: string,
-    event?: Events,
-  }[]
+  // @Input({required: true})
+  // template: {
+  //   icon: string,
+  //   event?: Events,
+  // }[]
 
   items: {
     icon: Icon
-    event?: Events
+    callback?: Function
   }[] = []
   constructor(
     private icons: IconService,
     private dock: DockService
     ){
+      this.dock.bindDock(this)
+  }
 
+  addItem(icon: Icon, callback?: Function) {
+    this.items.push({icon: icon, callback: callback})
   }
 
   ngOnInit(){
-    for(const menuItem of this.template) {
-      this.items.push({icon: this.icons.get(menuItem.icon), event: menuItem.event})
-    }
+    // for(const menuItem of this.template) {
+    //   this.items.push({icon: this.icons.get(menuItem.icon), event: menuItem.event})
+    // }
   }
 
   handle(event: Events) {
