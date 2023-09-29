@@ -1,4 +1,5 @@
-import { Injectable } from "@angular/core";
+import { ASTNode } from "src/app/types/astnode.type";
+import { ASTNodeType } from "src/app/types/astnodetype.enum";
 
 
 /** Source
@@ -19,7 +20,8 @@ const KEYWORDS = [
     'function', 'try', 'yield', 'const', 'continue', 'do', 'async', 'await'
 ]
 
-const BRACKETS = ['(', ')', '[', ']', '{', '}']
+const OPENING_BRACKETS = ['(', '[', '{']
+const CLOSING_BRACKETS = [ ')', ']', '}']
 
 const OPERATORS = ["+", "-", "=", "==", "===", "!=", "!==", "<", ">", "<=", ">=", "++", "--"]
 
@@ -31,29 +33,48 @@ const SYNTAX = [";", ",", ":", "->", "=>"]
  * Infra Living Standard ASCII Whitespace
  */
 const WHITESPACE = [" ", "\t", "\n", "\r", "\f"]
-@Injectable({
-    providedIn: 'root'
-})
-export class LexerService {
+export class Lexer {
 
     tokenize(words: string) {
+
+        const root: ASTNode = new ASTNode(ASTNodeType.DEFAULT)
+        root.setStart(0)
+        root.setEnd(words.length - 1)
+        const stack: ASTNode[] = [
+            root
+        ]
         const tokens: string[] = []
         let i = 0
-        while(words.charAt(i)) {
+        while(i < words.length) {
+            const initialIndex = i
+            if(i < words.length && OPENING_BRACKETS.includes(words.charAt(i))) {
+                const node = new ASTNode(this.parseBracketEnum(words.charAt(i)))
+                node.setStart(i)
+                stack.push(node)
+                i++
+            }
+
+            if(i < words.length && CLOSING_BRACKETS.includes(words.charAt(i))) {
+                const node = stack.pop()
+                node?.setEnd(i)
+                if(node) stack[stack.length-1].children.push(node)
+                i++
+            }
 
             // Skip whitespace
-            while(words.charAt(i) && WHITESPACE.includes(words.charAt(i))) i++
+            while(i < words.length && WHITESPACE.includes(words.charAt(i))) i++
 
+            // Parse token
             const tokenItems: string[] = []
-            while(words.charAt(i) && this.isAlphanumerical(words.charAt(i))) {
+            while(i < words.length && this.isAlphanumerical(words.charAt(i))) {
                 tokenItems.push(words.charAt(i))
                 i++
             }
+
+            if(i === initialIndex) i++
             let token = tokenItems.join("")
 
             if(token.length > 0) tokens.push(token)
-
-            i++
         }
     }
 
@@ -61,6 +82,21 @@ export class LexerService {
     private isAlphanumerical(c: string) {
         let n: number = c.charCodeAt(0)
         return (n >= 48 && n <= 57) || (n >=65 && n <=90) || (n >= 97 && n <= 122)
+    }
+
+    private parseBracketEnum(c: string):ASTNodeType {
+        switch(c) {
+            case '(':
+            case ')':
+                return ASTNodeType.PARAMETERBLOCK
+            case '{':
+            case '}':
+                return ASTNodeType.CODEBLOCK
+            case '[':
+            case ']':
+                return ASTNodeType.ARRAY
+        }
+        return ASTNodeType.DEFAULT
     }
 
 }

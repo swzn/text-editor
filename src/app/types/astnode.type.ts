@@ -5,14 +5,21 @@ export class ASTNode {
     range: {start: number, end:number}
     children: ASTNode[]
 
-    constructor(type: ASTNodeType, start: number, end: number) {
+    constructor(type: ASTNodeType) {
         this.type = type
-        this.range = {start:start, end:end}
         this.children = []
     }
 
+    setStart(start: number) {
+        this.range.start = start
+    }
+
+    setEnd(end:number) {
+        this.range.end = end
+    }
+
     toString() {
-        `${this.type}[start:end]`
+        `${this.type}[${this.range.start}:${this.range.end}]`
     }
 
     toStringRecursive(indent: number) {
