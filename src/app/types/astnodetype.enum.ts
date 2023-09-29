@@ -7,5 +7,7 @@ export enum ASTNodeType {
     STATEMENT = "statement",
     KEYWORD = "keyword",
     OPERATOR = "op",
-    TYPE = "type"
+    TYPE = "type",
+    TOKEN = "token",
+    DEFAULT = "default"
 }
