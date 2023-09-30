@@ -2,7 +2,7 @@ import { ASTNode } from "src/app/types/astnode.type";
 import { ASTNodeType } from "src/app/types/astnodetype.enum";
 
 
-/** Source
+/** Keywords inspired from
  * https://www.ecma-international.org/publications-and-standards/standards/ecma-262/
  * 
  * ecma-international ECMAScript 2023 standard
@@ -27,7 +27,7 @@ const OPERATORS = ["+", "-", "=", "==", "===", "!=", "!==", "<", ">", "<=", ">="
 
 const SYNTAX = [";", ",", ":", "->", "=>"]
 
-/** Source
+/** Whitespace taken from
  * https://developer.mozilla.org/en-US/docs/Glossary/Whitespace
  * 
  * Infra Living Standard ASCII Whitespace
@@ -35,7 +35,7 @@ const SYNTAX = [";", ",", ":", "->", "=>"]
 const WHITESPACE = [" ", "\t", "\n", "\r", "\f"]
 export class Lexer {
 
-    tokenize(words: string) {
+    tokenize(words: string): ASTNode {
 
         const root: ASTNode = new ASTNode(ASTNodeType.DEFAULT)
         root.setStart(0)
@@ -76,6 +76,7 @@ export class Lexer {
 
             if(token.length > 0) tokens.push(token)
         }
+        return stack.pop() as ASTNode
     }
 
 
