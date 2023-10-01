@@ -4,7 +4,11 @@
         [ngTemplateOutletContext]="{fileNode: tab}">
     </ng-container>
 </div>
-<textarea id="editor" [(ngModel)]="content" wrap="off" spellcheck="false" (input)="checkChange()"></textarea>
+<div id="editor">
+    <div class="line-numbers"></div>
+    <div class="lines"></div>
+</div>
+<!-- <textarea id="editor" [(ngModel)]="content" wrap="off" spellcheck="false" (input)="checkChange()"></textarea> -->
 
 
 <ng-template #tabTemplate let-fileNode="fileNode">
