@@ -49,10 +49,8 @@
 .line-numbers {
     width: 20px;
     height: 100%;
-    background-color: black;
 }
 .lines {
-    background-color: yellowgreen;
     width: 100%;
 }
 
