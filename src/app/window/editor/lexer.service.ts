@@ -1,5 +1,6 @@
 import { ASTNode } from "src/app/types/astnode.type";
 import { ASTNodeType } from "src/app/types/astnodetype.enum";
+import { FilePosition } from "src/app/types/fileposition.type";
 
 
 /** Keywords inspired from
@@ -38,45 +39,59 @@ export class Lexer {
     tokenize(words: string): ASTNode {
 
         const root: ASTNode = new ASTNode(ASTNodeType.DEFAULT)
-        root.setStart(0)
-        root.setEnd(words.length - 1)
+        root.setStart(new FilePosition(0, 0, 0))
         const stack: ASTNode[] = [
             root
         ]
         const tokens: string[] = []
-        let i = 0
-        while(i < words.length) {
-            const initialIndex = i
-            if(i < words.length && OPENING_BRACKETS.includes(words.charAt(i))) {
-                const node = new ASTNode(this.parseBracketEnum(words.charAt(i)))
-                node.setStart(i)
+        let fileIndex = 0 // Char index in file
+        let lineNumber = 0 // Current line number
+        let inlineIndex = 0 // Char index in current line
+        const forward = () => {
+            fileIndex++
+            lineNumber++
+            inlineIndex++
+        }
+        while(fileIndex < words.length) {
+            const initialIndex = fileIndex
+            if(fileIndex < words.length && OPENING_BRACKETS.includes(words.charAt(fileIndex))) {
+                const node = new ASTNode(this.parseBracketEnum(words.charAt(fileIndex)))
+                node.setStart(new FilePosition(lineNumber, inlineIndex, fileIndex))
                 stack.push(node)
-                i++
+                forward()
             }
 
-            if(i < words.length && CLOSING_BRACKETS.includes(words.charAt(i))) {
+            if(fileIndex < words.length && CLOSING_BRACKETS.includes(words.charAt(fileIndex))) {
                 const node = stack.pop()
-                node?.setEnd(i)
+                node?.setEnd(new FilePosition(lineNumber, inlineIndex, fileIndex))
                 if(node) stack[stack.length-1].children.push(node)
-                i++
+                forward()
             }
 
             // Skip whitespace
-            while(i < words.length && WHITESPACE.includes(words.charAt(i))) i++
+            while(fileIndex < words.length && WHITESPACE.includes(words.charAt(fileIndex))) {
+                if(words.charAt(fileIndex) == "\n") {
+                    lineNumber++
+                    inlineIndex
+                }
+                forward()
+            }
 
             // Parse token
             const tokenItems: string[] = []
-            while(i < words.length && this.isAlphanumerical(words.charAt(i))) {
-                tokenItems.push(words.charAt(i))
-                i++
+            while(fileIndex < words.length && this.isAlphanumerical(words.charAt(fileIndex))) {
+                tokenItems.push(words.charAt(fileIndex))
+                forward()
             }
 
-            if(i === initialIndex) i++
+            if(fileIndex === initialIndex) forward()
             let token = tokenItems.join("")
 
             if(token.length > 0) tokens.push(token)
         }
-        return stack.pop() as ASTNode
+        const result = stack.pop() as ASTNode
+        result.setEnd(new FilePosition(lineNumber, inlineIndex, fileIndex))
+        return result
     }
 
 

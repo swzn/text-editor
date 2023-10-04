@@ -1,8 +1,9 @@
 import { ASTNodeType } from "./astnodetype.enum"
+import { FilePosition } from "./fileposition.type"
 
 export class ASTNode {
     type: ASTNodeType
-    range: {start: number, end:number}
+    range: {start: FilePosition, end:FilePosition}
     children: ASTNode[]
 
     constructor(type: ASTNodeType) {
@@ -10,11 +11,11 @@ export class ASTNode {
         this.children = []
     }
 
-    setStart(start: number) {
+    setStart(start: FilePosition) {
         this.range.start = start
     }
 
-    setEnd(end:number) {
+    setEnd(end:FilePosition) {
         this.range.end = end
     }
 

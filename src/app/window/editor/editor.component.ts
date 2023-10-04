@@ -24,7 +24,7 @@ export class EditorComponent {
     this.editorService.component = this;
   }
 
-  @Input('ngModel')
+  // @Input('ngModel')
   content: string
 
   original: any
@@ -38,7 +38,7 @@ export class EditorComponent {
   async setFocus(file: FileNode) {
     this.unfocusCurrentTab()
     this.resetActiveTab()
-    
+  
     const fileContents = await this.editorService.getFileContents(file.path)
     this.content = fileContents
     this.removeCarriageReturn()
@@ -49,7 +49,6 @@ export class EditorComponent {
 
   async unfocusCurrentTab() {
     const currentTab = this.focusedTab
-
   }
 
   resetActiveTab() {
