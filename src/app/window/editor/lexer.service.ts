@@ -10,7 +10,7 @@ import { FilePosition } from "src/app/types/fileposition.type";
  * 
  * https://www.typescriptlang.org/docs/handbook/
  * 
- * TypeScript handboook
+ * TypeScript handbook
  */
 const KEYWORDS = [
     'private', 'public', 'static', 'export', 'class', 'let', 'var', 'catch',
