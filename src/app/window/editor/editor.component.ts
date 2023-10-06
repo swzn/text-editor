@@ -5,6 +5,8 @@ import { TabElement } from '../../types/tabelement.type';
 import { HashService } from 'src/app/filesystem/hash.service';
 import { Lexer } from './lexer.service';
 import { ASTNode } from 'src/app/types/astnode.type';
+import { LineElement } from 'src/app/types/lineelement.type';
+import { LineElementType } from 'src/app/types/lineelementtype.enum';
 
 const MAX_ATTEMPT = 10;
 
@@ -32,6 +34,8 @@ export class EditorComponent {
 
   lines: string[]
 
+  lineElements: LineElement[][]
+
   root: ASTNode
 
   tabElements: {[path: string]: TabElement}
@@ -46,9 +50,9 @@ export class EditorComponent {
     let l = new Lexer()
     let lexed = l.tokenize(this.removeCarriageReturn(fileContents))
     this.root = lexed.root
-    console.log(this.root)
-    console.log(this.root.toStringRecursive())
     this.lines = lexed.lines
+    this.lineElements = lexed.lineElements
+    console.log(lexed)
     this.focusedTab = file.path
     this.tabElements[file.path].element?.classList.add("active")
     this.hash.sha1(this.lines.join(), (fileHash) =>{  this.tabElements[file.path].originalHash = fileHash})
@@ -110,6 +114,13 @@ export class EditorComponent {
 
   removeCarriageReturn(content: string) {
     return content.replace(/\r/gm,'');
+  }
+
+  getClass(element: LineElement) {
+    if(element.type === LineElementType.BRACKET) {
+      return element.type + '-' + element.options!.bracketStack % 4 +'-element'
+    }
+    return element.type + '-element'
   }
 
 }

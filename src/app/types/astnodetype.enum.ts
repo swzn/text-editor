@@ -4,6 +4,7 @@ export enum ASTNodeType {
     CODEBLOCK = "codeblock",
     PARAMETERBLOCK = 'parameterblock',
     STRINGBLOCK = "stringblock",
+    COMMENTBLOCK = "commentblock",
     ARRAY = 'array',
     ESCAPE = "escape",
     STATEMENT = "statement",
