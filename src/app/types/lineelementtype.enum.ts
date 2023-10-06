@@ -11,5 +11,6 @@ export enum LineElementType {
     STRING = 'string',
     ESCAPED = 'escaped',
     MEMBER = 'member',
+    ERROR = 'ERROR',
     DEFAULT = "default"
 } 

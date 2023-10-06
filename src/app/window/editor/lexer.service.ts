@@ -22,7 +22,7 @@ const KEYWORDS = [
     'enum', 'finally', 'for', 'while', 'void', 'null', 'super', 'this', 'new',
     '...', 'return', 'false', 'extends', 'package', 'implements', 'interface',
     'function', 'try', 'yield', 'const', 'continue', 'do', 'async', 'await',
-    'constructor', 'readonly'
+    'constructor', 'readonly', 'import', 'from'
 ]
 
 const OPENING_BRACKETS = ['(', '[', '{']
@@ -81,7 +81,7 @@ export class Lexer {
             node?.setEnd(getCurrentPosition(lineOffset))
             if(node) {
                 if(stack[stack.length-1]) stack[stack.length-1].children.push(node)
-                else {console.log(lineElements); console.log(node)}
+                //else {console.log(lineElements); console.log(node)}
             }
             forward(words.charAt(fileIndex))        
         }
@@ -92,7 +92,6 @@ export class Lexer {
 
         const checkFlaggedType = (type: LineElementType) => {
             if(!flag) return type
-            else if(flag === LineElementType.STRING) return LineElementType.STRING
             else if(flag === LineElementType.COMMENT) return flag
             else if(flag === LineElementType.TYPE && type === LineElementType.DEFAULT) {
                 flag = undefined
@@ -100,43 +99,40 @@ export class Lexer {
             }
             return type
         }
-
         
         let bracketStack = 0
         while(fileIndex < words.length) {
             const initialIndex = fileIndex
 
-            if(fileIndex+1 < words.length && words.charAt(fileIndex) == '\\') {
-                currentLineElements.push(new LineElement(LineElementType.ESCAPED, words.charAt(fileIndex)))
-                forward(words.charAt(fileIndex))
-                currentLineElements.push(new LineElement(LineElementType.ESCAPED, words.charAt(fileIndex)))
-                forward(words.charAt(fileIndex))
-                continue
-            }
-
             if(fileIndex < words.length && STRING.includes(words.charAt(fileIndex))) {
+                let stringBuilder = ""
                 if(flag === undefined) {
-                    console.log('enter string')
-                    flag = LineElementType.STRING
-                    currentLineElements.push(new LineElement(LineElementType.STRING, words.charAt(fileIndex)))
+                    const starter = words.charAt(fileIndex)
+                    stringBuilder += words.charAt(fileIndex)
                     forward()
-                    continue
-                }
-                else if(flag === LineElementType.STRING) {
-                    console.log('exit string')
-                    currentLineElements.push(new LineElement(LineElementType.STRING, words.charAt(fileIndex)))
-                    flag = undefined
-                    forward()
-                    continue
-                }
-                else {
-                    currentLineElements.push(new LineElement(checkFlaggedType(LineElementType.DEFAULT), words.charAt(fileIndex)))
-                    forward()
+                    while(fileIndex < words.length && words.charAt(fileIndex) != starter && words.charAt(fileIndex) != '\n') {
+                        if(fileIndex+1 < words.length && words.charAt(fileIndex) == '\\') {
+                            stringBuilder += words.charAt(fileIndex)
+                            forward(words.charAt(fileIndex))
+                            stringBuilder += words.charAt(fileIndex)
+                            forward(words.charAt(fileIndex))
+                            continue
+                        }
+                        stringBuilder += words.charAt(fileIndex)
+                        forward()
+                    }
+                    if(words.charAt(fileIndex) === starter) {
+                        stringBuilder += starter
+                        currentLineElements.push(new LineElement(LineElementType.STRING, stringBuilder))
+                        forward()
+                    }
+                    else {
+                        currentLineElements.push(new LineElement(LineElementType.ERROR, stringBuilder))
+                    }
                 }
             }
 
-            if(fileIndex+1 < words.length && words.charAt(fileIndex) == '/' && words.charAt(fileIndex+1) == '*' && flag != LineElementType.STRING) {
-                console.log('pushed comment')
+            if(fileIndex+1 < words.length && words.charAt(fileIndex) == '/' && words.charAt(fileIndex+1) == '*') {
                 stack.push(this.makeNode(ASTNodeType.COMMENTBLOCK, getCurrentPosition()))
                 flag = LineElementType.COMMENT
                 currentLineElements.push(new LineElement(LineElementType.COMMENT, words.charAt(fileIndex)))
@@ -146,8 +142,7 @@ export class Lexer {
                 continue
             }
 
-            if(fileIndex+1 < words.length && words.charAt(fileIndex) == '*' && words.charAt(fileIndex+1) == '/' && flag != LineElementType.STRING) {
-                console.log('popped comment')
+            if(fileIndex+1 < words.length && words.charAt(fileIndex) == '*' && words.charAt(fileIndex+1) == '/') {
                 currentLineElements.push(new LineElement(LineElementType.COMMENT, words.charAt(fileIndex)))
                 popStackAndPushChild(1)
                 currentLineElements.push(new LineElement(LineElementType.COMMENT, words.charAt(fileIndex)))
@@ -156,19 +151,20 @@ export class Lexer {
                 continue
             }
 
-            if(fileIndex < words.length && SYNTAX.includes(words.charAt(fileIndex)) && flag != LineElementType.STRING) {
+            if(fileIndex < words.length && SYNTAX.includes(words.charAt(fileIndex))) {
                 const type = checkFlaggedType(LineElementType.SYNTAX)
                 currentLineElements.push(new LineElement(type, words.charAt(fileIndex)))
-                if(type === LineElementType.SYNTAX && words.charAt(fileIndex) === ':') flag = LineElementType.TYPE 
+                if(type === LineElementType.SYNTAX && words.charAt(fileIndex) === ':') {
+                    if(currentLineElements[currentLineElements.length-1] && currentLineElements[currentLineElements.length-1].type === LineElementType.DEFAULT) flag = LineElementType.TYPE
+                }
                 forward(words.charAt(fileIndex))
             }
 
-            if(fileIndex < words.length && SINGLE_CHAR_OPERATORS.includes(words.charAt(fileIndex)) && flag != LineElementType.STRING) {
+            if(fileIndex < words.length && SINGLE_CHAR_OPERATORS.includes(words.charAt(fileIndex))) {
                 currentLineElements.push(new LineElement(checkFlaggedType(LineElementType.SYNTAX), words.charAt(fileIndex)))
                 forward(words.charAt(fileIndex))
             }
-            if(fileIndex < words.length && OPENING_BRACKETS.includes(words.charAt(fileIndex)) && flag != LineElementType.STRING) {
-                console.log('pushed bracket')
+            if(fileIndex < words.length && OPENING_BRACKETS.includes(words.charAt(fileIndex))) {
                 stack.push(this.makeNode(this.parseBracketEnum(words.charAt(fileIndex)), getCurrentPosition()) )
                 const type = checkFlaggedType(LineElementType.BRACKET)
                 currentLineElements.push(new LineElement(type, words.charAt(fileIndex),  {bracketStack: bracketStack}))
@@ -176,8 +172,7 @@ export class Lexer {
                 forward(words.charAt(fileIndex))
             }
 
-            if(fileIndex < words.length && CLOSING_BRACKETS.includes(words.charAt(fileIndex)) && flag != LineElementType.STRING) {
-                console.log('popped bracket')
+            if(fileIndex < words.length && CLOSING_BRACKETS.includes(words.charAt(fileIndex))) {
                 bracketStack--;
                 const type = checkFlaggedType(LineElementType.BRACKET)
                 currentLineElements.push(new LineElement(type, words.charAt(fileIndex),  {bracketStack: bracketStack}))
