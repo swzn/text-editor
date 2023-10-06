@@ -46,7 +46,8 @@ export class EditorComponent {
     let l = new Lexer()
     let lexed = l.tokenize(this.removeCarriageReturn(fileContents))
     this.root = lexed.root
-    console.log(this.root.toStringRecursive(0))
+    console.log(this.root)
+    console.log(this.root.toStringRecursive())
     this.lines = lexed.lines
     this.focusedTab = file.path
     this.tabElements[file.path].element?.classList.add("active")

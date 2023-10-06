@@ -20,11 +20,11 @@ export class ASTNode {
         this.range.end = end
     }
 
-    toString() {
-        return `${this.type}[${this.range.start}:${this.range.end}]`
+    toString() : string {
+        return `${this.type}[(${this.range.start?.lineNumber}:${this.range.start?.inlineIndex})-(${this.range.end?.lineNumber}:${this.range.end?.inlineIndex})]\n`
     }
 
-    toStringRecursive(indent?: number) {
-        return " ".repeat(indent? indent : 0) + this.toString() + this.children.forEach( e=> e.toStringRecursive(indent? indent++ : 1))
+    toStringRecursive(indent: number = 0) : string {
+        return "+".repeat(indent > 0 ? 1 : 0) + "-".repeat(indent > 0 ? indent-1 : 0) + this.toString()+ this.children.map( e => e.toStringRecursive(indent + 1)).join('')
     }
 }

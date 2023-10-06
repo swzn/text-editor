@@ -58,14 +58,14 @@ export class Lexer {
             const initialIndex = fileIndex
             if(fileIndex < words.length && OPENING_BRACKETS.includes(words.charAt(fileIndex))) {
                 const node = new ASTNode(this.parseBracketEnum(words.charAt(fileIndex)))
-                node.setStart(new FilePosition(lineNumber, inlineIndex, fileIndex))
+                node.setStart(new FilePosition(fileIndex, inlineIndex, lineNumber))
                 stack.push(node)
                 forward(words.charAt(fileIndex))
             }
 
             if(fileIndex < words.length && CLOSING_BRACKETS.includes(words.charAt(fileIndex))) {
                 const node = stack.pop()
-                node?.setEnd(new FilePosition(lineNumber, inlineIndex, fileIndex))
+                node?.setEnd(new FilePosition(fileIndex, inlineIndex, lineNumber))
                 if(node) stack[stack.length-1].children.push(node)
                 forward(words.charAt(fileIndex))
             }
@@ -96,7 +96,7 @@ export class Lexer {
         }
         
         const result = stack.pop() as ASTNode
-        result.setEnd(new FilePosition(lineNumber, inlineIndex, fileIndex))
+        result.setEnd(new FilePosition(fileIndex, inlineIndex, lineNumber))
         return {root: result, lines: lines}
     }
 
