@@ -3,12 +3,13 @@ import { FilePosition } from "./fileposition.type"
 
 export class ASTNode {
     type: ASTNodeType
-    range: {start: FilePosition, end:FilePosition}
+    range: {start: FilePosition | undefined, end:FilePosition | undefined}
     children: ASTNode[]
 
     constructor(type: ASTNodeType) {
         this.type = type
         this.children = []
+        this.range = {start: undefined, end: undefined}
     }
 
     setStart(start: FilePosition) {
@@ -20,10 +21,10 @@ export class ASTNode {
     }
 
     toString() {
-        `${this.type}[${this.range.start}:${this.range.end}]`
+        return `${this.type}[${this.range.start}:${this.range.end}]`
     }
 
-    toStringRecursive(indent: number) {
-        " ".repeat(indent) + this.toString() + this.children.forEach( e=> e.toStringRecursive(indent++))
+    toStringRecursive(indent?: number) {
+        return " ".repeat(indent? indent : 0) + this.toString() + this.children.forEach( e=> e.toStringRecursive(indent? indent++ : 1))
     }
 }

@@ -3,6 +3,8 @@ import { EditorService } from './editor.service';
 import { FileNode } from 'src/app/types/filenode.type';
 import { TabElement } from '../../types/tabelement.type';
 import { HashService } from 'src/app/filesystem/hash.service';
+import { Lexer } from './lexer.service';
+import { ASTNode } from 'src/app/types/astnode.type';
 
 const MAX_ATTEMPT = 10;
 
@@ -24,12 +26,13 @@ export class EditorComponent {
     this.editorService.component = this;
   }
 
-  // @Input('ngModel')
-  content: string
-
   original: any
 
   tabs: Set<FileNode>
+
+  lines: string[]
+
+  root: ASTNode
 
   tabElements: {[path: string]: TabElement}
 
@@ -40,11 +43,14 @@ export class EditorComponent {
     this.resetActiveTab()
   
     const fileContents = await this.editorService.getFileContents(file.path)
-    this.content = fileContents
-    this.removeCarriageReturn()
+    let l = new Lexer()
+    let lexed = l.tokenize(this.removeCarriageReturn(fileContents))
+    this.root = lexed.root
+    console.log(this.root.toStringRecursive(0))
+    this.lines = lexed.lines
     this.focusedTab = file.path
     this.tabElements[file.path].element?.classList.add("active")
-    this.hash.sha1(this.content, (fileHash) =>{  this.tabElements[file.path].originalHash = fileHash})
+    this.hash.sha1(this.lines.join(), (fileHash) =>{  this.tabElements[file.path].originalHash = fileHash})
   }
 
   async unfocusCurrentTab() {
@@ -86,7 +92,7 @@ export class EditorComponent {
 
   checkChange() {
     const currentPath = this.focusedTab
-    const snapshot = this.content
+    const snapshot = this.lines.join("\r\n")
     this.hash.sha1(snapshot, 
         (fileHash) => {
           if(!currentPath || !this.tabElements[currentPath]) return
@@ -101,8 +107,8 @@ export class EditorComponent {
     return filePath + " - Modified"
   }
 
-  removeCarriageReturn() {
-    this.content = this.content.replace(/\r/gm,'');
+  removeCarriageReturn(content: string) {
+    return content.replace(/\r/gm,'');
   }
 
 }

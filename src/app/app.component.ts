@@ -16,10 +16,18 @@ export class AppComponent implements AfterViewInit{
   }
 
   ngAfterViewInit() {
-    const test = ()=> {
-      console.log('test')
+    const fn1 = ()=> {
+      console.log(1)
     }
-    this.dock.addDockItem(this.icons.get('folder'), test)
+    const fn2 = ()=> {
+      console.log(2)
+    }
+    const fn3 = ()=> {
+      console.log(3)
+    }
+    this.dock.addDockItem(this.icons.get('folder'), fn1)
+    this.dock.addDockItem(this.icons.get('bookmark1'), fn2)
+    this.dock.addDockItem(this.icons.get('bookmark2'), fn3)
   }
   
 
