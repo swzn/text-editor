@@ -8,6 +8,8 @@ export enum LineElementType {
     COMMENT = "comment",
     BRACKET = "bracket",
     TYPE = 'type',
+    STRING = 'string',
+    ESCAPED = 'escaped',
     MEMBER = 'member',
     DEFAULT = "default"
 } 

@@ -32,6 +32,8 @@ const SINGLE_CHAR_OPERATORS = ["+", "-", "=", '.', '/', /*"==", "===", "!=", "!=
 
 const SYNTAX = [";", ",", ":", "->", "=>"]
 
+const STRING = ["\'", "\"", "\`"]
+
 /** Whitespace taken from
  * https://developer.mozilla.org/en-US/docs/Glossary/Whitespace
  * 
@@ -54,7 +56,6 @@ export class Lexer {
         let stack: ASTNode[] = [
             root
         ]
-        console.log(stack)
         const tokens: string[] = []
         let fileIndex = 0 // Char index in file
         let lineNumber = 0 // Current line number
@@ -63,7 +64,7 @@ export class Lexer {
         let flag: LineElementType | undefined
 
         const lines = []
-        const lineElements = []
+        const lineElements: LineElement[][] = []
         let currentLineElements: LineElement[] = []
         const forward = (char?: string) => {
             fileIndex++
@@ -76,10 +77,12 @@ export class Lexer {
         }
 
         const popStackAndPushChild = (lineOffset: number = 0) => {
-            console.log(stack)
             const node = stack.pop()
             node?.setEnd(getCurrentPosition(lineOffset))
-            if(node) stack[stack.length-1].children.push(node)
+            if(node) {
+                if(stack[stack.length-1]) stack[stack.length-1].children.push(node)
+                else {console.log(lineElements); console.log(node)}
+            }
             forward(words.charAt(fileIndex))        
         }
 
@@ -89,6 +92,7 @@ export class Lexer {
 
         const checkFlaggedType = (type: LineElementType) => {
             if(!flag) return type
+            else if(flag === LineElementType.STRING) return LineElementType.STRING
             else if(flag === LineElementType.COMMENT) return flag
             else if(flag === LineElementType.TYPE && type === LineElementType.DEFAULT) {
                 flag = undefined
@@ -102,7 +106,37 @@ export class Lexer {
         while(fileIndex < words.length) {
             const initialIndex = fileIndex
 
-            if(fileIndex+1 < words.length && words.charAt(fileIndex) == '/' && words.charAt(fileIndex+1) == '*') {
+            if(fileIndex+1 < words.length && words.charAt(fileIndex) == '\\') {
+                currentLineElements.push(new LineElement(LineElementType.ESCAPED, words.charAt(fileIndex)))
+                forward(words.charAt(fileIndex))
+                currentLineElements.push(new LineElement(LineElementType.ESCAPED, words.charAt(fileIndex)))
+                forward(words.charAt(fileIndex))
+                continue
+            }
+
+            if(fileIndex < words.length && STRING.includes(words.charAt(fileIndex))) {
+                if(flag === undefined) {
+                    console.log('enter string')
+                    flag = LineElementType.STRING
+                    currentLineElements.push(new LineElement(LineElementType.STRING, words.charAt(fileIndex)))
+                    forward()
+                    continue
+                }
+                else if(flag === LineElementType.STRING) {
+                    console.log('exit string')
+                    currentLineElements.push(new LineElement(LineElementType.STRING, words.charAt(fileIndex)))
+                    flag = undefined
+                    forward()
+                    continue
+                }
+                else {
+                    currentLineElements.push(new LineElement(checkFlaggedType(LineElementType.DEFAULT), words.charAt(fileIndex)))
+                    forward()
+                }
+            }
+
+            if(fileIndex+1 < words.length && words.charAt(fileIndex) == '/' && words.charAt(fileIndex+1) == '*' && flag != LineElementType.STRING) {
+                console.log('pushed comment')
                 stack.push(this.makeNode(ASTNodeType.COMMENTBLOCK, getCurrentPosition()))
                 flag = LineElementType.COMMENT
                 currentLineElements.push(new LineElement(LineElementType.COMMENT, words.charAt(fileIndex)))
@@ -112,7 +146,8 @@ export class Lexer {
                 continue
             }
 
-            if(fileIndex+1 < words.length && words.charAt(fileIndex) == '*' && words.charAt(fileIndex+1) == '/') {
+            if(fileIndex+1 < words.length && words.charAt(fileIndex) == '*' && words.charAt(fileIndex+1) == '/' && flag != LineElementType.STRING) {
+                console.log('popped comment')
                 currentLineElements.push(new LineElement(LineElementType.COMMENT, words.charAt(fileIndex)))
                 popStackAndPushChild(1)
                 currentLineElements.push(new LineElement(LineElementType.COMMENT, words.charAt(fileIndex)))
@@ -121,26 +156,28 @@ export class Lexer {
                 continue
             }
 
-            if(fileIndex < words.length && SYNTAX.includes(words.charAt(fileIndex))) {
+            if(fileIndex < words.length && SYNTAX.includes(words.charAt(fileIndex)) && flag != LineElementType.STRING) {
                 const type = checkFlaggedType(LineElementType.SYNTAX)
                 currentLineElements.push(new LineElement(type, words.charAt(fileIndex)))
                 if(type === LineElementType.SYNTAX && words.charAt(fileIndex) === ':') flag = LineElementType.TYPE 
                 forward(words.charAt(fileIndex))
             }
 
-            if(fileIndex < words.length && SINGLE_CHAR_OPERATORS.includes(words.charAt(fileIndex))) {
+            if(fileIndex < words.length && SINGLE_CHAR_OPERATORS.includes(words.charAt(fileIndex)) && flag != LineElementType.STRING) {
                 currentLineElements.push(new LineElement(checkFlaggedType(LineElementType.SYNTAX), words.charAt(fileIndex)))
                 forward(words.charAt(fileIndex))
             }
-            if(fileIndex < words.length && OPENING_BRACKETS.includes(words.charAt(fileIndex))) {
-                stack.push(this.makeNode(this.parseBracketEnum(words.charAt(fileIndex)), getCurrentPosition()))
+            if(fileIndex < words.length && OPENING_BRACKETS.includes(words.charAt(fileIndex)) && flag != LineElementType.STRING) {
+                console.log('pushed bracket')
+                stack.push(this.makeNode(this.parseBracketEnum(words.charAt(fileIndex)), getCurrentPosition()) )
                 const type = checkFlaggedType(LineElementType.BRACKET)
                 currentLineElements.push(new LineElement(type, words.charAt(fileIndex),  {bracketStack: bracketStack}))
                 bracketStack++;
                 forward(words.charAt(fileIndex))
             }
 
-            if(fileIndex < words.length && CLOSING_BRACKETS.includes(words.charAt(fileIndex))) {
+            if(fileIndex < words.length && CLOSING_BRACKETS.includes(words.charAt(fileIndex)) && flag != LineElementType.STRING) {
+                console.log('popped bracket')
                 bracketStack--;
                 const type = checkFlaggedType(LineElementType.BRACKET)
                 currentLineElements.push(new LineElement(type, words.charAt(fileIndex),  {bracketStack: bracketStack}))
@@ -153,6 +190,7 @@ export class Lexer {
                     forward()
                     lineNumber++
                     inlineIndex = 0
+                    if (flag === LineElementType.STRING) flag = undefined
                     lines.push(currentLine)
                     lineElements.push(currentLineElements)
                     currentLineElements = [] 

@@ -17,7 +17,6 @@
         </div>
     </div>
 </div>
-<!-- <textarea id="editor" [(ngModel)]="content" wrap="off" spellcheck="false" (input)="checkChange()"></textarea> -->
 
 <ng-template #styledElementTemplate let-element="element"><span [class]="getClass(element)">{{element.value}}</span></ng-template>
 <ng-template #defaultElement let-element="element"><pre>{{element.value}}</pre></ng-template>
