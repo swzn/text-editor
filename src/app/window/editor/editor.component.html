@@ -10,21 +10,28 @@
     </div>
     <div class="lines" #linesRef>
         <span class="line-container default-element" *ngFor="let line of lineElements; index as i" spellcheck="false">
-            <ng-container *ngFor="let element of line" (input)="checkChange($event)"
+            <ng-container *ngFor="let element of line; index as j" (input)="checkChange($event)"
                 [ngTemplateOutlet]="element.type === 'whitespace' ? defaultElement : styledElementTemplate"
-                [ngTemplateOutletContext]="{element: element, lineNumber: i}">
+                [ngTemplateOutletContext]="{element: element, lineNumber: i, elementNumber: j}">
             </ng-container>
         </span>
     </div>
 </div>
-<ng-template #styledElementTemplate let-element="element" let-lineNumber="lineNumber">
-    <span (input)="checkChange(element, elementRef)" [ngClass]="getClass(element)" [innerHTML]="element.value" contenteditable="plaintext-only" spellcheck="false" #elementRef></span>
+
+<ng-template #styledElementTemplate let-element="element" let-lineNumber="lineNumber" let-elementNumber="elementNumber">
+    <span 
+    (input)="checkChange(element, elementRef)" [ngClass]="getClass(element)" [innerHTML]="element.value" 
+    contenteditable="plaintext-only" spellcheck="false" 
+    (keydown)="handleKeydown($event, lineNumber, elementNumber)" #elementRef></span>
 </ng-template>
-<ng-template #defaultElement let-element="element" let-lineNumber="lineNumber"><pre contenteditable="plaintext-only" spellcheck="false">{{element.value}}</pre></ng-template>
+
+<ng-template #defaultElement let-element="element" let-lineNumber="lineNumber" let-elementNumber="elementNumber">
+    <pre contenteditable="plaintext-only" spellcheck="false"
+    (keydown)="handleKeydown($event, lineNumber, elementNumber)">{{element.value}}</pre>
+</ng-template>
 
 <ng-template #tabTemplate let-fileNode="fileNode">
     <div class="tab" [ngClass]="this.tabElements[fileNode.path].edited" [title]="getTabTitle(fileNode.path)" [id]="fileNode.path" (click)="setFocus(fileNode)" (dblclick)="removeTab(fileNode)">
         <span>{{fileNode.name}}</span>
-        <!-- <div class="tab-tooltip"><span>{{fileNode.path}}</span></div> -->
     </div>
 </ng-template>

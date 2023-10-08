@@ -152,7 +152,7 @@
     white-space: nowrap;
 }
 
-.line-container span {
+.line-container span,pre {
     border: none;
     overflow: auto;
     outline: none;
@@ -162,5 +162,5 @@
 }
 
 .line-container span:focus {
-    background-color: #3dac2c;
+    background-color: #93f18588;
 }

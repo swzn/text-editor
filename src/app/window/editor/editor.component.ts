@@ -142,4 +142,102 @@ export class EditorComponent {
     return element.type + '-element'
   }
 
+  handleKeydown(event: KeyboardEvent, lineNumber: number, elementNumber: number) {
+    if(this.isArrowKey(event.code)) {
+      event.preventDefault()
+      this.handleArrowKey(event.code, lineNumber, this.linesContent.nativeElement.children[lineNumber].children[elementNumber])
+      return
+    }
+    console.log(event)
+    //if(event.code === "")
+  }
+
+  isArrowKey(code: string): boolean {
+    return code === "ArrowUp" || code === "ArrowLeft" || code === "ArrowRight" || code === "ArrowDown"   
+  }
+
+  handleArrowKey(code: string, lineNumber: number, element: HTMLElement) {
+    let verticalOffset = lineNumber;
+    let horizontalOffset = window.getSelection()?.anchorOffset || 0;
+    let elementContainingCursor: HTMLElement = element;
+    if(code === "ArrowRight") {
+      horizontalOffset++;  
+    }
+    else if(code === "ArrowLeft") {
+      horizontalOffset--;  
+    }
+    else if(code === "ArrowUp") {
+      verticalOffset--;
+    }
+    else if(code === "ArrowDown") {
+      verticalOffset++;
+    }
+
+    if(horizontalOffset < 0) {
+      elementContainingCursor = element.previousElementSibling as HTMLElement || elementContainingCursor
+      horizontalOffset = Math.max(0, elementContainingCursor.innerText.length - 1)
+    }
+    else if (horizontalOffset > element.innerText.length) {
+      elementContainingCursor = element.nextElementSibling as HTMLElement || elementContainingCursor
+      horizontalOffset = Math.min(elementContainingCursor.innerText.length, 1)
+    }
+    
+    if(Math.min(Math.max(verticalOffset, 0), this.linesContent.nativeElement.children.length) != lineNumber) {
+      const col = this.getColumnFromElementOffset(element, horizontalOffset)
+      const value = this.findColumnInLine(verticalOffset, col)
+      elementContainingCursor = value.element
+      horizontalOffset = value.offset
+    }
+
+    this.setCursor(elementContainingCursor, horizontalOffset)
+    
+  }
+
+  getColumnFromElementOffset(element: HTMLElement, offset: number): number {
+    let count = offset;
+    let currentElement = element.previousElementSibling as HTMLElement
+    while(currentElement) {
+      count += currentElement.innerText.length
+      currentElement = currentElement.previousElementSibling as HTMLElement
+    }
+    return count;
+  }
+
+  findColumnInLine(lineNumber: number, col: number): { element: HTMLElement, offset: number } {
+    let count = 0
+    const line = this.getLine(lineNumber);
+    const value = { element: line.children[0] as HTMLElement, offset: 0 }
+    for(let i = 0; i < line.children.length; i++) {
+      const element = (line.children[i] as HTMLElement)
+      if(element.innerText.length + count <= col) {
+        count += element.innerText.length
+      }
+      else {
+        value.element = element;
+        value.offset = col - count
+        return value
+      }
+    }
+    value.element = line.children[line.children.length - 1] as HTMLElement
+    value.offset = value.element.innerText.length
+    return value
+  }
+
+  setCursor(element: HTMLElement, offset:number) {
+    const range = document.createRange()
+    const sel = window.getSelection()
+    range.setStart(element!.childNodes[0], offset)
+    range.collapse(true)
+
+    sel!.removeAllRanges()
+    sel!.addRange(range)
+  }
+
+  getLines(): HTMLElement[] {
+    return this.linesContent.nativeElement.children;
+  }
+
+  getLine(index: number) {
+    return this.getLines()[index] as HTMLElement;
+  }
 }

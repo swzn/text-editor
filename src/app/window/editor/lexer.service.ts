@@ -189,7 +189,7 @@ export class Lexer {
                     if (flag === LineElementType.STRING) flag = undefined
                     lines.push(currentLine)
                     lineElements.push(currentLineElements)
-                    currentLineElements = [] 
+                    currentLineElements = [new LineElement(LineElementType.WHITESPACE, "")] 
                     currentLine = ""
                     continue
                 }
@@ -223,7 +223,10 @@ export class Lexer {
                 forward(words.charAt(fileIndex))
             }
         }
-        
+        if(currentLineElements.length != 0 || currentLineElements[0].value != "") {
+            lines.push(currentLine)
+            lineElements.push(currentLineElements)
+        }
         const result = stack.pop() as ASTNode
         result.setEnd(new FilePosition(fileIndex, inlineIndex, lineNumber))
         return {root: result, lines: lines, lineElements: lineElements}
