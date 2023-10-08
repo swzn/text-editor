@@ -29,6 +29,5 @@ export class AppComponent implements AfterViewInit{
     this.dock.addDockItem(this.icons.get('bookmark1'), fn2)
     this.dock.addDockItem(this.icons.get('bookmark2'), fn3)
   }
-  
 
 }

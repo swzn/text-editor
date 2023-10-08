@@ -13,8 +13,6 @@ module.exports = {
 function saveFile(path, contents) {
     const directories = path.split('\\')
     const parent = directories.slice(0, directories.length - 1).join("\\")
-    console.log(parent)
-    console.log(path)
     if(!fs.existsSync(parent)) {
         fs.mkdirSync(parent, {recursive: true})
     }

@@ -8,18 +8,20 @@
     <div class="line-numbers">
         <div class="line-numbers-container" *ngFor="let line of lines;index as i">{{i+1}}</div>
     </div>
-    <div class="lines">
-        <div class="line-container"  *ngFor="let line of lineElements" contentEditable="true" spellcheck="false" autocorrect="off">
-            <ng-container *ngFor="let element of line" 
-            [ngTemplateOutlet]="element.type === 'whitespace' ? defaultElement : styledElementTemplate"
-            [ngTemplateOutletContext]="{element: element}">
-            </ng-container>
+    <div class="lines" #linesRef>
+        <div class="line-container"  *ngFor="let line of lineElements; index as i">
+            <!-- <ng-container *ngFor="let element of line"
+                [ngTemplateOutlet]="element.type === 'whitespace' ? defaultElement : styledElementTemplate"
+                [ngTemplateOutletContext]="{element: element, lineNumber: i}">
+            </ng-container> -->
         </div>
     </div>
 </div>
 
-<ng-template #styledElementTemplate let-element="element"><span [class]="getClass(element)">{{element.value}}</span></ng-template>
-<ng-template #defaultElement let-element="element"><pre>{{element.value}}</pre></ng-template>
+<ng-template #styledElementTemplate let-element="element" let-lineNumber="lineNumber">
+    <span [class]="getClass(element)"  contenteditable="plaintext-only" autocapitalize="off" spellcheck="false" [(innerHTML)]="element.value"></span>
+</ng-template>
+<ng-template #defaultElement let-element="element" let-lineNumber="lineNumber"><pre>{{element.value}}</pre></ng-template>
 
 <ng-template #tabTemplate let-fileNode="fileNode">
     <div class="tab" [ngClass]="this.tabElements[fileNode.path].edited" [title]="getTabTitle(fileNode.path)" [id]="fileNode.path" (click)="setFocus(fileNode)" (dblclick)="removeTab(fileNode)">

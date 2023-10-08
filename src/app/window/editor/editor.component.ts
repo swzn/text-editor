@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { EditorService } from './editor.service';
 import { FileNode } from 'src/app/types/filenode.type';
 import { TabElement } from '../../types/tabelement.type';
@@ -41,6 +41,10 @@ export class EditorComponent {
   tabElements: {[path: string]: TabElement}
 
   focusedTab: string | undefined
+  
+  @Output() lineChanged: EventEmitter<any> = new EventEmitter();
+
+  @ViewChild('linesRef') linesContent: ElementRef;
 
   async setFocus(file: FileNode) {
     this.unfocusCurrentTab()
@@ -52,10 +56,9 @@ export class EditorComponent {
     this.root = lexed.root
     this.lines = lexed.lines
     this.lineElements = lexed.lineElements
-    console.log(lexed)
     this.focusedTab = file.path
     this.tabElements[file.path].element?.classList.add("active")
-    this.hash.sha1(this.lines.join(), (fileHash) =>{  this.tabElements[file.path].originalHash = fileHash})
+    this.hash.sha1(this.lineElements.map(line => line.map(e => e.value.replaceAll('\r', '').replaceAll('\n', '')).join('')).join('\r\n'), (fileHash) =>{  this.tabElements[file.path].originalHash = fileHash})
   }
 
   async unfocusCurrentTab() {
@@ -97,14 +100,15 @@ export class EditorComponent {
 
   checkChange() {
     const currentPath = this.focusedTab
-    const snapshot = this.lines.join("\r\n")
+    let lines = this.lineElements.map(line => line.map(e => e.value.replaceAll('\r', '').replaceAll('\n', '')).join(''))
+    const snapshot = lines.join("\r\n")
     this.hash.sha1(snapshot, 
         (fileHash) => {
           if(!currentPath || !this.tabElements[currentPath]) return
           this.tabElements[currentPath].edited = (fileHash === this.tabElements[currentPath].originalHash) ? "" : "modified"
           this.editorService.saveTempFile(this.tabElements[currentPath].id, snapshot)
-        }
-      )
+      }
+    )
   }
 
   getTabTitle(filePath: string) {
