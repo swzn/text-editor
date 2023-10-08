@@ -180,6 +180,7 @@ export class Lexer {
             }
 
             // Skip whitespace
+            let renderableWhitespace = ""
             while(fileIndex < words.length && WHITESPACE.includes(words.charAt(fileIndex))) {
                 if(words.charAt(fileIndex) == "\n") {
                     forward()
@@ -193,10 +194,11 @@ export class Lexer {
                     continue
                 }
                 if(words.charAt(fileIndex) === " " || words.charAt(fileIndex) === "\t") {
-                    currentLineElements.push(new LineElement(LineElementType.WHITESPACE, words.charAt(fileIndex)))
+                    renderableWhitespace += words.charAt(fileIndex)
                     forward(words.charAt(fileIndex))
                 }
             }
+            if(renderableWhitespace.length > 0) currentLineElements.push(new LineElement(LineElementType.WHITESPACE, renderableWhitespace))
 
             // Parse token
             let token: string = ""
@@ -213,6 +215,7 @@ export class Lexer {
                     const type = stack.length <= 2 ? LineElementType.MEMBER : LineElementType.DEFAULT
                     currentLineElements.push(new LineElement(checkFlaggedType(type), token))
                 }
+                continue
             } 
 
             if(fileIndex === initialIndex) {

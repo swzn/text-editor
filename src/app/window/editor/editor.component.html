@@ -9,17 +9,16 @@
         <div class="line-numbers-container" *ngFor="let line of lines;index as i">{{i+1}}</div>
     </div>
     <div class="lines" #linesRef>
-        <div class="line-container"  *ngFor="let line of lineElements; index as i">
-            <!-- <ng-container *ngFor="let element of line"
+        <span class="line-container default-element" *ngFor="let line of lineElements; index as i" spellcheck="false">
+            <ng-container *ngFor="let element of line" (input)="checkChange($event)"
                 [ngTemplateOutlet]="element.type === 'whitespace' ? defaultElement : styledElementTemplate"
                 [ngTemplateOutletContext]="{element: element, lineNumber: i}">
-            </ng-container> -->
-        </div>
+            </ng-container>
+        </span>
     </div>
 </div>
-
 <ng-template #styledElementTemplate let-element="element" let-lineNumber="lineNumber">
-    <span [class]="getClass(element)"  contenteditable="plaintext-only" autocapitalize="off" spellcheck="false" [(innerHTML)]="element.value"></span>
+    <span (input)="checkChange(element, elementRef)" [ngClass]="getClass(element)" [innerHTML]="element.value" contenteditable="true" #elementRef></span>
 </ng-template>
 <ng-template #defaultElement let-element="element" let-lineNumber="lineNumber"><pre>{{element.value}}</pre></ng-template>
 

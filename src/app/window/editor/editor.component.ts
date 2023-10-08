@@ -46,6 +46,7 @@ export class EditorComponent {
 
   @ViewChild('linesRef') linesContent: ElementRef;
 
+
   async setFocus(file: FileNode) {
     this.unfocusCurrentTab()
     this.resetActiveTab()
@@ -98,7 +99,21 @@ export class EditorComponent {
     }
   }
 
-  checkChange() {
+  checkChange(event: any, element?: HTMLSpanElement) {
+    const anchorOffset = window.getSelection()!.anchorOffset
+    if(anchorOffset < 2) console.log(anchorOffset)
+    if(element) event.value = element.innerText 
+
+    const setCursor = () => {
+      const range = document.createRange()
+      const sel = window.getSelection()
+      range.setStart(element!.childNodes[0], anchorOffset)
+      range.collapse(true)
+
+      sel!.removeAllRanges()
+      sel!.addRange(range)
+    }
+    setTimeout(setCursor)
     const currentPath = this.focusedTab
     let lines = this.lineElements.map(line => line.map(e => e.value.replaceAll('\r', '').replaceAll('\n', '')).join(''))
     const snapshot = lines.join("\r\n")
@@ -122,7 +137,7 @@ export class EditorComponent {
 
   getClass(element: LineElement) {
     if(element.type === LineElementType.BRACKET) {
-      return element.type + '-' + element.options!.bracketStack % 4 +'-element'
+      return element.type + '-' +element.options!.bracketStack % 4 + '-element'
     }
     return element.type + '-element'
   }
