@@ -100,6 +100,8 @@ export class EditorComponent {
   }
 
   checkChange(event: any, element?: HTMLSpanElement) {
+    if(event.inputType === "deleteContentBackward") return;
+    console.log(event)
     const anchorOffset = window.getSelection()!.anchorOffset
     
     const setCursor = () => {
@@ -142,14 +144,26 @@ export class EditorComponent {
     return element.type + '-element'
   }
 
-  handleKeydown(event: KeyboardEvent, lineNumber: number, elementNumber: number) {
+  handleKeydown(event: KeyboardEvent, lineNumber: number, element: HTMLElement) {
     if(this.isArrowKey(event.code)) {
       event.preventDefault()
-      this.handleArrowKey(event.code, lineNumber, this.linesContent.nativeElement.children[lineNumber].children[elementNumber])
+      this.handleArrowKey(event.code, lineNumber, element)
       return
     }
-    console.log(event)
-    //if(event.code === "")
+    if(event.code === "Backspace") {
+      if(element.innerText.length <= 1) {
+        event.preventDefault()
+        const previousElementSibling = element.previousElementSibling as HTMLElement
+        this.getLine(lineNumber).removeChild(element)
+        if(this.getLine(lineNumber).children.length === 0) {
+          this.lineElements.splice(lineNumber, 1)
+          if(lineNumber != 0) this.setCursor(this.getLine(lineNumber-1).children[0] as HTMLElement, 0)
+        }
+        else if(previousElementSibling) {
+          this.setCursor(previousElementSibling, previousElementSibling.innerText.length);
+        }
+      }
+    }
   }
 
   isArrowKey(code: string): boolean {
