@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { EditorService } from './editor.service';
 import { FileNode } from 'src/app/types/filenode.type';
 import { TabElement } from '../../types/tabelement.type';
@@ -42,7 +42,6 @@ export class EditorComponent {
 
   focusedTab: string | undefined
   
-  @Output() lineChanged: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('linesRef') linesContent: ElementRef;
 
@@ -99,9 +98,10 @@ export class EditorComponent {
     }
   }
 
-  checkChange(event: any, element?: HTMLSpanElement) {
-    if(event.inputType === "deleteContentBackward") return;
-    console.log(event)
+  checkChange(event: Event) {
+    const element = this.getSelectedElement()
+    if(!element) return
+    if((event as InputEvent).inputType === "deleteContentBackward") return;
     const anchorOffset = window.getSelection()!.anchorOffset
     
     const setCursor = () => {
@@ -144,25 +144,71 @@ export class EditorComponent {
     return element.type + '-element'
   }
 
-  handleKeydown(event: KeyboardEvent, lineNumber: number, element: HTMLElement) {
+  handleClick(event: MouseEvent, lineNumber: number) {
+    const tryToPlaceCursor = (attempt: number) => {
+      if(attempt >= 5) return
+      if(this.getLine(lineNumber).children.length === 1) {
+        this.setCursor(this.getLine(lineNumber).children[0] as HTMLElement, 0)
+      }
+      else {
+        setTimeout(() => tryToPlaceCursor(attempt+1), 10)
+      }
+    }
+    if(this.getSelectedElement() === this.getLine(lineNumber)) {
+      if(this.getLine(lineNumber).children.length === 0) {
+        this.lineElements[lineNumber].push(new LineElement(LineElementType.DEFAULT, ""))
+      }
+      tryToPlaceCursor(0)
+    }
+  }
+
+  handleKeydown(event: KeyboardEvent, lineNumber: number) {
+    const element = this.getSelectedElement()
+    if(!element) return;
     if(this.isArrowKey(event.code)) {
       event.preventDefault()
       this.handleArrowKey(event.code, lineNumber, element)
       return
     }
+
     if(event.code === "Backspace") {
       if(element.innerText.length <= 1) {
-        event.preventDefault()
-        const previousElementSibling = element.previousElementSibling as HTMLElement
-        this.getLine(lineNumber).removeChild(element)
-        if(this.getLine(lineNumber).children.length === 0) {
+        if(this.getLine(lineNumber) != element) {
+          this.getLine(lineNumber).removeChild(element)
+          if(element.previousElementSibling) {
+            const previousElementSibling = element.previousElementSibling as HTMLElement
+            this.setCursor(previousElementSibling, previousElementSibling.innerText.length);
+          }
+          if(this.getLine(lineNumber).children.length === 0) {
+            this.lineElements.splice(lineNumber, 1)
+            if(lineNumber != 0) this.setCursor(this.getLine(lineNumber-1).children[0] as HTMLElement, 0)
+          }
+        }
+        else {
           this.lineElements.splice(lineNumber, 1)
           if(lineNumber != 0) this.setCursor(this.getLine(lineNumber-1).children[0] as HTMLElement, 0)
         }
-        else if(previousElementSibling) {
-          this.setCursor(previousElementSibling, previousElementSibling.innerText.length);
+      }
+    }
+
+    if(event.code === "Enter") {
+      event.preventDefault()
+      this.lineElements.splice(lineNumber+1, 0, [new LineElement(LineElementType.WHITESPACE, "")])
+      const tryPlaceCursor = (attempt:number) => {
+        if(attempt >= 5) return;
+        if(this.getLine(lineNumber+1)) {
+          this.setCursor(this.getLine(lineNumber+1).children[0] as HTMLElement, 0)
+        }
+        else {
+          setTimeout(() => tryPlaceCursor(attempt+1), 10)
         }
       }
+      setTimeout(()=> tryPlaceCursor(0), 10)
+    }
+
+    if(this.getSelectedElement() === this.getLine(lineNumber)) {
+      event.preventDefault()
+      this.lineElements[lineNumber].splice(0, 0, new LineElement(LineElementType.DEFAULT, event.code))
     }
   }
 
@@ -174,6 +220,7 @@ export class EditorComponent {
     let verticalOffset = lineNumber;
     let horizontalOffset = window.getSelection()?.anchorOffset || 0;
     let elementContainingCursor: HTMLElement = element;
+
     if(code === "ArrowRight") {
       horizontalOffset++;  
     }
@@ -188,12 +235,26 @@ export class EditorComponent {
     }
 
     if(horizontalOffset < 0) {
-      elementContainingCursor = element.previousElementSibling as HTMLElement || elementContainingCursor
-      horizontalOffset = Math.max(0, elementContainingCursor.innerText.length - 1)
+      elementContainingCursor = element.previousElementSibling as HTMLElement
+      if(elementContainingCursor) horizontalOffset = Math.max(0, elementContainingCursor.innerText.length - 1)
+      else {
+        if(lineNumber - 1 >= 0) {
+          elementContainingCursor = this.getLine(lineNumber-1).children[this.getLine(lineNumber-1).children.length - 1] as HTMLElement
+          horizontalOffset = elementContainingCursor.innerText.length
+        }
+        if(!elementContainingCursor) return
+      }
     }
     else if (horizontalOffset > element.innerText.length) {
-      elementContainingCursor = element.nextElementSibling as HTMLElement || elementContainingCursor
-      horizontalOffset = Math.min(elementContainingCursor.innerText.length, 1)
+      elementContainingCursor = element.nextElementSibling as HTMLElement
+      if (elementContainingCursor) horizontalOffset = Math.min(elementContainingCursor.innerText.length, 1)
+      else {
+        if(lineNumber + 1 < this.getLines().length) {
+          elementContainingCursor = this.getLine(lineNumber+1).children[0] as HTMLElement
+          horizontalOffset = 0
+        }
+        if(!elementContainingCursor) return
+      }
     }
     
     if(Math.min(Math.max(verticalOffset, 0), this.linesContent.nativeElement.children.length) != lineNumber) {
@@ -238,9 +299,10 @@ export class EditorComponent {
   }
 
   setCursor(element: HTMLElement, offset:number) {
+    console.log({element})
     const range = document.createRange()
     const sel = window.getSelection()
-    range.setStart(element!.childNodes[0], offset)
+    range.setStart(element!.childNodes[0] || element, offset)
     range.collapse(true)
 
     sel!.removeAllRanges()
@@ -253,5 +315,11 @@ export class EditorComponent {
 
   getLine(index: number) {
     return this.getLines()[index] as HTMLElement;
+  }
+
+  getSelectedElement() {
+    let node = window.getSelection()?.anchorNode
+    if(node?.nodeType === Node.TEXT_NODE) node = node.parentElement
+    return node as HTMLElement
   }
 }

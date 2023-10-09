@@ -1,6 +1,6 @@
 :host {
     background-color: var(--theme-dock-bg);
-    width: 50px;
+    min-width: 50px;
     border-right: 1px solid var(--theme-border);
     display: flex;
     flex-direction: column;

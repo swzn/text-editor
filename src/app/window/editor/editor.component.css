@@ -100,7 +100,7 @@
     flex-direction: column;
 }
 .lines {
-    width: 100%;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     border-left: 1px solid var(--theme-border);   
@@ -118,7 +118,9 @@
 }
 
 .line-container:focus-within {
-    box-shadow: inset 0px 0.5px 0px 0px #302e2e, inset 0px -0.5px 0px 0px #302e2e;
+    box-shadow: 
+        inset 0px 0.5px 0px 0px #302e2e,
+        inset 0px -0.5px 0px 0px #302e2e;
 }
 .line-numbers-container {
     display: flex;
@@ -159,8 +161,9 @@
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
+    white-space: nowrap;
 }
 
-.line-container span:focus {
+.line-container:focus span:focus {
     background-color: #93f18588;
 }

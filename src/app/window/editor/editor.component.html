@@ -9,25 +9,29 @@
         <div class="line-numbers-container" *ngFor="let line of lineElements;index as i">{{i+1}}</div>
     </div>
     <div class="lines" #linesRef>
-        <span class="line-container default-element" *ngFor="let line of lineElements; index as i" spellcheck="false">
+        <div class="line-container default-element" *ngFor="let line of lineElements; index as i" 
+        spellcheck="false"
+        contenteditable="plaintext-only"
+        (click)="handleClick($event, i)"
+        (input)="checkChange($event)"
+        (keydown)="handleKeydown($event, i)"
+        >
             <ng-container *ngFor="let element of line; index as j"
                 [ngTemplateOutlet]="element.type === 'whitespace' ? defaultElement : styledElementTemplate"
                 [ngTemplateOutletContext]="{element: element, lineNumber: i, elementNumber: j}">
             </ng-container>
-        </span>
+        </div>
     </div>
 </div>
 
 <ng-template #styledElementTemplate let-element="element" let-lineNumber="lineNumber" let-elementNumber="elementNumber">
     <span 
-    (input)="checkChange($event, elementRef)" [ngClass]="getClass(element)" [innerText]="element.value" 
-    contenteditable="plaintext-only" spellcheck="false" 
-    (keydown)="handleKeydown($event, lineNumber, elementRef)" #elementRef></span>
+    [ngClass]="getClass(element)" [innerText]="element.value" 
+    #elementRef></span>
 </ng-template>
 
 <ng-template #defaultElement let-element="element" let-lineNumber="lineNumber" let-elementNumber="elementNumber">
-    <pre contenteditable="plaintext-only" spellcheck="false"
-    (keydown)="handleKeydown($event, lineNumber, elementRef)" #elementRef>{{element.value}}</pre>
+    <pre [innerText]="element.value"></pre>
 </ng-template>
 
 <ng-template #tabTemplate let-fileNode="fileNode">
