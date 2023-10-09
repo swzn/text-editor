@@ -345,7 +345,24 @@ export class EditorComponent {
     let lexed = this.lexer.tokenize(this.removeCarriageReturn(content))
     this.root = lexed.root
     this.lines = lexed.lines
-    this.lineElements = lexed.lineElements
+    if(!this.lineElements) this.lineElements = lexed.lineElements
+    else {
+      for (let i = 0; i < lexed.lineElements.length; i++) {
+        if(i < this.lineElements.length) {
+          this.lineElements[i].splice(0, this.lineElements[i].length)
+          for(let element of lexed.lineElements[i]) {
+            this.lineElements[i].push(element)
+          }
+        }
+        else {
+          this.lineElements.push(lexed.lineElements[i])
+        }
+      }
+      if(this.lineElements.length > lexed.lineElements.length) {
+        this.lineElements.splice(lexed.lineElements.length, this.lineElements.length - lexed.lineElements.length)
+      }
+    }
+    
   }
 
   cleanFlag() {
