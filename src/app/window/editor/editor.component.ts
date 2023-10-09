@@ -17,7 +17,6 @@ const MAX_ATTEMPT = 10;
 })
 export class EditorComponent {
 
-
   constructor(
     private editorService: EditorService,
     private hash: HashService
@@ -26,7 +25,9 @@ export class EditorComponent {
     this.tabs = new Set<FileNode>
     this.tabElements = {}
     this.editorService.component = this;
+    this.lexer = new Lexer();
   }
+
 
   original: any
 
@@ -42,20 +43,21 @@ export class EditorComponent {
 
   focusedTab: string | undefined
   
+  private lexer: Lexer;
+
+  private dirty: boolean = false;
+  
 
   @ViewChild('linesRef') linesContent: ElementRef;
 
+  
 
   async setFocus(file: FileNode) {
     this.unfocusCurrentTab()
     this.resetActiveTab()
   
     const fileContents = await this.editorService.getFileContents(file.path)
-    let l = new Lexer()
-    let lexed = l.tokenize(this.removeCarriageReturn(fileContents))
-    this.root = lexed.root
-    this.lines = lexed.lines
-    this.lineElements = lexed.lineElements
+    this.buildASTFromContent(fileContents)
     this.focusedTab = file.path
     this.tabElements[file.path].element?.classList.add("active")
     this.hash.sha1(this.lineElements.map(line => line.map(e => e.value.replaceAll('\r', '').replaceAll('\n', '')).join('')).join('\r\n'), (fileHash) =>{  this.tabElements[file.path].originalHash = fileHash})
@@ -98,23 +100,33 @@ export class EditorComponent {
     }
   }
 
-  checkChange(event: Event) {
+  checkChange(event: Event, lineNumber: number) {
     const element = this.getSelectedElement()
     if(!element) return
     if((event as InputEvent).inputType === "deleteContentBackward") return;
     const anchorOffset = window.getSelection()!.anchorOffset
+    const col = this.getColumnFromElementOffset(element, anchorOffset)
     
+    this.buildASTFromContent(this.buildStringFromLines())
+    this.dirty = false;
     const setCursor = () => {
-      const range = document.createRange()
-      const sel = window.getSelection()
-      range.setStart(element!.childNodes[0], anchorOffset)
-      range.collapse(true)
+      if(!this.dirty) {
+        const range = document.createRange()
+        const sel = window.getSelection()
+        const val = this.findColumnInLine(lineNumber, col)
+        console.log(val)
+        range.setStart(val.element.childNodes[0], val.offset)
+        range.collapse(true)
 
-      sel!.removeAllRanges()
-      sel!.addRange(range)
+        sel!.removeAllRanges()
+        sel!.addRange(range)
+      }
+      else {
+        setTimeout(() => setCursor(), 5)
+      }
     }
 
-    setTimeout(setCursor)
+    setTimeout(() => setCursor(), 5)
 
     const currentPath = this.focusedTab
     let lines = this.lineElements.map(line => line.map(e => e.value.replaceAll('\r', '').replaceAll('\n', '')).join(''))
@@ -299,7 +311,6 @@ export class EditorComponent {
   }
 
   setCursor(element: HTMLElement, offset:number) {
-    console.log({element})
     const range = document.createRange()
     const sel = window.getSelection()
     range.setStart(element!.childNodes[0] || element, offset)
@@ -321,5 +332,26 @@ export class EditorComponent {
     let node = window.getSelection()?.anchorNode
     if(node?.nodeType === Node.TEXT_NODE) node = node.parentElement
     return node as HTMLElement
+  }
+
+  buildStringFromLines() {
+    let lines: string[] = []
+    for (let line of this.getLines()) {
+      lines.push(this.removeCarriageReturn(line.innerText).replaceAll('\n', ''))
+    }
+    return lines.join('\r\n')
+  }
+
+  buildASTFromContent(content: string) {
+    let lexed = this.lexer.tokenize(this.removeCarriageReturn(content))
+    this.root = lexed.root
+    this.lines = lexed.lines
+    this.lineElements = lexed.lineElements
+  }
+
+  cleanFlag() {
+    if(this.dirty) {
+      this.dirty = false
+    }
   }
 }

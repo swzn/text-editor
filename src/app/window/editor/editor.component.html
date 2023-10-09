@@ -9,23 +9,24 @@
         <div class="line-numbers-container" *ngFor="let line of lineElements;index as i">{{i+1}}</div>
     </div>
     <div class="lines" #linesRef>
-        <div class="line-container default-element" *ngFor="let line of lineElements; index as i" 
+        <div class="line-container default-element" *ngFor="let line of lineElements; index as i; let last=last" 
         spellcheck="false"
         contenteditable="plaintext-only"
         (click)="handleClick($event, i)"
-        (input)="checkChange($event)"
+        (input)="checkChange($event, i)"
         (keydown)="handleKeydown($event, i)"
         >
             <ng-container *ngFor="let element of line; index as j"
                 [ngTemplateOutlet]="element.type === 'whitespace' ? defaultElement : styledElementTemplate"
                 [ngTemplateOutletContext]="{element: element, lineNumber: i, elementNumber: j}">
             </ng-container>
+            {{last ? cleanFlag() : ''}}
         </div>
     </div>
 </div>
 
 <ng-template #styledElementTemplate let-element="element" let-lineNumber="lineNumber" let-elementNumber="elementNumber">
-    <span 
+    <span
     [ngClass]="getClass(element)" [innerText]="element.value" 
     #elementRef></span>
 </ng-template>
