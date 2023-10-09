@@ -103,7 +103,7 @@ export class EditorComponent {
   checkChange(event: Event, lineNumber: number) {
     const element = this.getSelectedElement()
     if(!element) return
-    if((event as InputEvent).inputType === "deleteContentBackward") return;
+    // if((event as InputEvent).inputType === "deleteContentBackward") return
     const anchorOffset = window.getSelection()!.anchorOffset
     const col = this.getColumnFromElementOffset(element, anchorOffset)
     
@@ -114,7 +114,6 @@ export class EditorComponent {
         const range = document.createRange()
         const sel = window.getSelection()
         const val = this.findColumnInLine(lineNumber, col)
-        console.log(val)
         range.setStart(val.element.childNodes[0], val.offset)
         range.collapse(true)
 
