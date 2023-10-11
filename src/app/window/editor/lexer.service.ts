@@ -189,7 +189,7 @@ export class Lexer {
                     if (flag === LineElementType.STRING) flag = undefined
                     lines.push(currentLine)
                     lineElements.push(currentLineElements)
-                    currentLineElements = [new LineElement(LineElementType.WHITESPACE, "")] 
+                    currentLineElements = [new LineElement(LineElementType.DEFAULT, "")] 
                     currentLine = ""
                     continue
                 }

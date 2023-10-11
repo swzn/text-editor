@@ -42,6 +42,13 @@ export class EditorComponent {
   tabElements: {[path: string]: TabElement}
 
   focusedTab: string | undefined
+
+  cursor: {
+    element: HTMLElement,
+    offset: number,
+    row: number
+    col: number
+  }
   
   private lexer: Lexer;
 
@@ -204,11 +211,12 @@ export class EditorComponent {
 
     if(event.code === "Enter") {
       event.preventDefault()
-      this.lineElements.splice(lineNumber+1, 0, [new LineElement(LineElementType.WHITESPACE, "")])
+      this.lineElements.splice(lineNumber+1, 0, [new LineElement(LineElementType.DEFAULT, "")])
       const tryPlaceCursor = (attempt:number) => {
         if(attempt >= 5) return;
         if(this.getLine(lineNumber+1)) {
           this.setCursor(this.getLine(lineNumber+1).children[0] as HTMLElement, 0)
+          console.log(this.getLine(lineNumber+1).children[0])
         }
         else {
           setTimeout(() => tryPlaceCursor(attempt+1), 10)
@@ -216,10 +224,19 @@ export class EditorComponent {
       }
       setTimeout(()=> tryPlaceCursor(0), 10)
     }
+    
+    if(this.getSelectedElement() != this.getLine(lineNumber)) {
+      this.cursor = this.getCursor(lineNumber)
+    }
 
     if(this.getSelectedElement() === this.getLine(lineNumber)) {
       event.preventDefault()
-      this.lineElements[lineNumber].splice(0, 0, new LineElement(LineElementType.DEFAULT, event.code))
+      console.log(event)
+      const val = this.findColumnInLine(this.cursor.row, this.cursor.col)
+      this.setCursor(val.element, val.offset)
+      console.log(val)
+      this.cursor = this.getCursor(this.cursor.row)
+      //this.lineElements[lineNumber].splice(this.lineElements[], 0, new LineElement(LineElementType.KEYWORD, event.key))
     }
   }
 
@@ -317,6 +334,15 @@ export class EditorComponent {
 
     sel!.removeAllRanges()
     sel!.addRange(range)
+  }
+
+  getCursor(lineNumber: number) {
+    const sel = window.getSelection()
+    const col = this.getColumnFromElementOffset(sel?.anchorNode as HTMLElement, sel?.anchorOffset!)
+    const row = lineNumber
+    return {
+      element: sel?.anchorNode! as HTMLElement, offset: sel?.anchorOffset!, row: row, col: col
+    }
   }
 
   getLines(): HTMLElement[] {
