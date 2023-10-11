@@ -40,7 +40,7 @@ const STRING = ["\'", "\"", "\`"]
  * Infra Living Standard ASCII Whitespace
  */
 const WHITESPACE = [" ", "\t", "\n", "\r", "\f"]
-export class Lexer {
+export class TypeScriptLexer {
 
     /**
      * Benchmarked at
@@ -49,7 +49,7 @@ export class Lexer {
      * Test configuration:
      * Tokenizing a 688kb file 10,000 times takes 545,316ms
      */
-    tokenize(words: string): {root: ASTNode, lines: string[], lineElements: LineElement[][]} {
+    generateAST(words: string): {root: ASTNode, lines: string[], lineElements: LineElement[][]} {
 
         const root: ASTNode = new ASTNode(ASTNodeType.DEFAULT)
         root.setStart(new FilePosition(0, 0, 0))

@@ -3,10 +3,11 @@ import { EditorService } from './editor.service';
 import { FileNode } from 'src/app/types/filenode.type';
 import { TabElement } from '../../types/tabelement.type';
 import { HashService } from 'src/app/filesystem/hash.service';
-import { Lexer } from './lexer.service';
 import { ASTNode } from 'src/app/types/astnode.type';
 import { LineElement } from 'src/app/types/lineelement.type';
 import { LineElementType } from 'src/app/types/lineelementtype.enum';
+import { TypeScriptLexer } from 'src/app/lexer/typescript/typescript.lexer';
+import { Lexer } from 'src/app/lexer/lexer';
 
 const MAX_ATTEMPT = 10;
 
@@ -25,7 +26,7 @@ export class EditorComponent {
     this.tabs = new Set<FileNode>
     this.tabElements = {}
     this.editorService.component = this;
-    this.lexer = new Lexer();
+    this.lexer = new TypeScriptLexer();
   }
 
 
@@ -50,7 +51,7 @@ export class EditorComponent {
     col: number
   }
   
-  private lexer: Lexer;
+  private lexer: TypeScriptLexer;
 
   private dirty: boolean = false;
   
@@ -368,7 +369,7 @@ export class EditorComponent {
   }
 
   buildASTFromContent(content: string) {
-    let lexed = this.lexer.tokenize(this.removeCarriageReturn(content))
+    let lexed = this.lexer.generateAST(this.removeCarriageReturn(content))
     this.root = lexed.root
     this.lines = lexed.lines
     if(!this.lineElements) this.lineElements = lexed.lineElements
