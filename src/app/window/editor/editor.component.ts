@@ -114,7 +114,7 @@ export class EditorComponent {
     const anchorOffset = window.getSelection()!.anchorOffset
     const col = this.getColumnFromElementOffset(element, anchorOffset)
     
-    this.buildASTFromContent(this.buildStringFromLines())
+    //this.buildASTFromContent(this.buildStringFromLines())
     this.dirty = false;
     const setCursor = () => {
       if(!this.dirty) {
