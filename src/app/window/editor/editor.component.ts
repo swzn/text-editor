@@ -217,7 +217,6 @@ export class EditorComponent {
         if(attempt >= 5) return;
         if(this.getLine(lineNumber+1)) {
           this.setCursor(this.getLine(lineNumber+1).children[0] as HTMLElement, 0)
-          console.log(this.getLine(lineNumber+1).children[0])
         }
         else {
           setTimeout(() => tryPlaceCursor(attempt+1), 10)
@@ -232,10 +231,8 @@ export class EditorComponent {
 
     if(this.getSelectedElement() === this.getLine(lineNumber)) {
       event.preventDefault()
-      console.log(event)
       const val = this.findColumnInLine(this.cursor.row, this.cursor.col)
       this.setCursor(val.element, val.offset)
-      console.log(val)
       this.cursor = this.getCursor(this.cursor.row)
       //this.lineElements[lineNumber].splice(this.lineElements[], 0, new LineElement(LineElementType.KEYWORD, event.key))
     }

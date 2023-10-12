@@ -52,7 +52,6 @@ export class SidebarComponent {
   }
 
   toggle() {
-    console.log('toggled')
     this.display = this.display === "none" ? this.display = "block" : "none";
   }
 

@@ -17,7 +17,7 @@ export class AppComponent implements AfterViewInit{
 
   ngAfterViewInit() {
     const fn1 = ()=> {
-      console.log(1)
+      this.dock.toggleSidebar()
     }
     const fn2 = ()=> {
       console.log(2)
