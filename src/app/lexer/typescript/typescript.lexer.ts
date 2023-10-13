@@ -81,7 +81,6 @@ export class TypeScriptLexer {
             node?.setEnd(getCurrentPosition(lineOffset))
             if(node) {
                 if(stack[stack.length-1]) stack[stack.length-1].children.push(node)
-                //else {console.log(lineElements); console.log(node)}
             }
             forward(words.charAt(fileIndex))        
         }
