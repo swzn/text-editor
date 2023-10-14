@@ -231,6 +231,182 @@ export class TypeScriptLexer {
         return {root: result, lines: lines, lineElements: lineElements}
     }
 
+    updateEditor(words: string): {root: ASTNode, lineElements: LineElement[][]} {
+
+        const root: ASTNode = new ASTNode(ASTNodeType.DEFAULT)
+        root.setStart(new FilePosition(0, 0, 0))
+        let stack: ASTNode[] = [
+            root
+        ]
+        const tokens: string[] = []
+        let fileIndex = 0 // Char index in file
+        let lineNumber = 0 // Current line number
+        let inlineIndex = 0 // Char index in current line
+        let flag: LineElementType | undefined
+
+        const lineElements: LineElement[][] = []
+        let currentLineElements: LineElement[] = []
+        const forward = (char?: string) => {
+            fileIndex++
+            inlineIndex++
+        }
+
+        const getCurrentPosition = (lineOffset: number = 0) => {
+            return new FilePosition(fileIndex + lineOffset, inlineIndex + lineOffset, lineNumber)
+        }
+
+        const popStackAndPushChild = (lineOffset: number = 0) => {
+            const node = stack.pop()
+            node?.setEnd(getCurrentPosition(lineOffset))
+            if(node) {
+                if(stack[stack.length-1]) stack[stack.length-1].children.push(node)
+            }
+            forward(words.charAt(fileIndex))        
+        }
+
+        const getLastPushedBlock = () => {
+            return stack[stack.length-1].type
+        }
+
+        const checkFlaggedType = (type: LineElementType) => {
+            if(!flag) return type
+            else if(flag === LineElementType.COMMENT) return flag
+            else if(flag === LineElementType.TYPE && type === LineElementType.DEFAULT) {
+                flag = undefined
+                return LineElementType.TYPE
+            }
+            return type
+        }
+        
+        let bracketStack = 0
+        while(fileIndex < words.length) {
+            const initialIndex = fileIndex
+
+            if(fileIndex < words.length && STRING.includes(words.charAt(fileIndex))) {
+                let stringBuilder = ""
+                if(flag === undefined) {
+                    const starter = words.charAt(fileIndex)
+                    stringBuilder += words.charAt(fileIndex)
+                    forward()
+                    while(fileIndex < words.length && words.charAt(fileIndex) != starter && words.charAt(fileIndex) != '\n') {
+                        if(fileIndex+1 < words.length && words.charAt(fileIndex) == '\\') {
+                            stringBuilder += words.charAt(fileIndex)
+                            forward(words.charAt(fileIndex))
+                            stringBuilder += words.charAt(fileIndex)
+                            forward(words.charAt(fileIndex))
+                            continue
+                        }
+                        stringBuilder += words.charAt(fileIndex)
+                        forward()
+                    }
+                    if(words.charAt(fileIndex) === starter) {
+                        stringBuilder += starter
+                        currentLineElements.push(new LineElement(LineElementType.STRING, stringBuilder))
+                        forward()
+                    }
+                    else {
+                        currentLineElements.push(new LineElement(LineElementType.ERROR, stringBuilder))
+                    }
+                }
+            }
+
+            if(fileIndex+1 < words.length && words.charAt(fileIndex) == '/' && words.charAt(fileIndex+1) == '*') {
+                stack.push(this.makeNode(ASTNodeType.COMMENTBLOCK, getCurrentPosition()))
+                flag = LineElementType.COMMENT
+                currentLineElements.push(new LineElement(LineElementType.COMMENT, words.charAt(fileIndex)))
+                forward(words.charAt(fileIndex))
+                currentLineElements.push(new LineElement(LineElementType.COMMENT, words.charAt(fileIndex)))
+                forward(words.charAt(fileIndex))
+                continue
+            }
+
+            if(fileIndex+1 < words.length && words.charAt(fileIndex) == '*' && words.charAt(fileIndex+1) == '/') {
+                currentLineElements.push(new LineElement(LineElementType.COMMENT, words.charAt(fileIndex)))
+                popStackAndPushChild(1)
+                currentLineElements.push(new LineElement(LineElementType.COMMENT, words.charAt(fileIndex)))
+                forward(words.charAt(fileIndex))
+                flag = undefined
+                continue
+            }
+
+            if(fileIndex < words.length && SYNTAX.includes(words.charAt(fileIndex))) {
+                const type = checkFlaggedType(LineElementType.SYNTAX)
+                currentLineElements.push(new LineElement(type, words.charAt(fileIndex)))
+                if(type === LineElementType.SYNTAX && words.charAt(fileIndex) === ':') {
+                    if(currentLineElements[currentLineElements.length-1] && currentLineElements[currentLineElements.length-1].type === LineElementType.DEFAULT) flag = LineElementType.TYPE
+                }
+                forward(words.charAt(fileIndex))
+            }
+
+            if(fileIndex < words.length && SINGLE_CHAR_OPERATORS.includes(words.charAt(fileIndex))) {
+                currentLineElements.push(new LineElement(checkFlaggedType(LineElementType.SYNTAX), words.charAt(fileIndex)))
+                forward(words.charAt(fileIndex))
+            }
+            if(fileIndex < words.length && OPENING_BRACKETS.includes(words.charAt(fileIndex))) {
+                stack.push(this.makeNode(this.parseBracketEnum(words.charAt(fileIndex)), getCurrentPosition()) )
+                const type = checkFlaggedType(LineElementType.BRACKET)
+                currentLineElements.push(new LineElement(type, words.charAt(fileIndex),  {bracketStack: bracketStack}))
+                bracketStack++;
+                forward(words.charAt(fileIndex))
+            }
+
+            if(fileIndex < words.length && CLOSING_BRACKETS.includes(words.charAt(fileIndex))) {
+                bracketStack--;
+                const type = checkFlaggedType(LineElementType.BRACKET)
+                currentLineElements.push(new LineElement(type, words.charAt(fileIndex),  {bracketStack: bracketStack}))
+                popStackAndPushChild()
+            }
+
+            // Skip whitespace
+            let renderableWhitespace = ""
+            while(fileIndex < words.length && WHITESPACE.includes(words.charAt(fileIndex))) {
+                if(words.charAt(fileIndex) == "\n") {
+                    forward()
+                    lineNumber++
+                    inlineIndex = 0
+                    if (flag === LineElementType.STRING) flag = undefined
+                    lineElements.push(currentLineElements)
+                    currentLineElements = [new LineElement(LineElementType.DEFAULT, "")] 
+                    continue
+                }
+                if(words.charAt(fileIndex) === " " || words.charAt(fileIndex) === "\t") {
+                    renderableWhitespace += words.charAt(fileIndex)
+                    forward(words.charAt(fileIndex))
+                }
+            }
+            if(renderableWhitespace.length > 0) currentLineElements.push(new LineElement(LineElementType.WHITESPACE, renderableWhitespace))
+
+            // Parse token
+            let token: string = ""
+            while(fileIndex < words.length && this.isAlphanumerical(words.charAt(fileIndex))) {
+                token += (words.charAt(fileIndex))
+                forward(words.charAt(fileIndex))
+            }
+            if(token.length > 0) {
+                tokens.push(token)
+                if(KEYWORDS.includes(token)) {
+                    currentLineElements.push(new LineElement(checkFlaggedType(LineElementType.KEYWORD), token))
+                }
+                else {
+                    const type = stack.length <= 2 ? LineElementType.MEMBER : LineElementType.DEFAULT
+                    currentLineElements.push(new LineElement(checkFlaggedType(type), token))
+                }
+                continue
+            } 
+
+            if(fileIndex === initialIndex) {
+                currentLineElements.push(new LineElement(checkFlaggedType(LineElementType.DEFAULT), words.charAt(fileIndex)))
+                forward(words.charAt(fileIndex))
+            }
+        }
+        if(currentLineElements.length != 0 || currentLineElements[0].value != "") {
+            lineElements.push(currentLineElements)
+        }
+        const result = stack.pop() as ASTNode
+        result.setEnd(new FilePosition(fileIndex, inlineIndex, lineNumber))
+        return {root: result, lineElements: lineElements}
+    }
+
 
     private isAlphanumerical(c: string) {
         let n: number = c.charCodeAt(0)
