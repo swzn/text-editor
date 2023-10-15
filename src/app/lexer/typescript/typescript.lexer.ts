@@ -264,10 +264,6 @@ export class TypeScriptLexer {
             forward(words.charAt(fileIndex))        
         }
 
-        const getLastPushedBlock = () => {
-            return stack[stack.length-1].type
-        }
-
         const checkFlaggedType = (type: LineElementType) => {
             if(!flag) return type
             else if(flag === LineElementType.COMMENT) return flag
