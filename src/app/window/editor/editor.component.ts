@@ -234,7 +234,6 @@ export class EditorComponent {
       const val = this.findColumnInLine(this.cursor.row, this.cursor.col)
       this.setCursor(val.element, val.offset)
       this.cursor = this.getCursor(this.cursor.row)
-      //this.lineElements[lineNumber].splice(this.lineElements[], 0, new LineElement(LineElementType.KEYWORD, event.key))
     }
   }
 
