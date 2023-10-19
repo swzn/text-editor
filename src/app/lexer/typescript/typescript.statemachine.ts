@@ -15,4 +15,8 @@ export class TypeScriptStateMachine {
     {
         return undefined
     }
+
+    parseWord() {}
+
+    parseSyntax() {}
 }
