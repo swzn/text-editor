@@ -115,6 +115,7 @@
     box-sizing: border-box;
     align-items: center;
     display: flex;
+    line-height: 100%;
 }
 
 .line-container:focus-within {
@@ -156,7 +157,6 @@
 
 .line-container span,pre {
     border: none;
-    overflow: auto;
     outline: none;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;

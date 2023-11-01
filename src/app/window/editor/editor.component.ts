@@ -54,6 +54,8 @@ export class EditorComponent {
   private lexer: TypeScriptLexer;
 
   private dirty: boolean = false;
+
+  private isRebuilding: boolean = false;
   
 
   @ViewChild('linesRef') linesContent: ElementRef;
@@ -108,20 +110,19 @@ export class EditorComponent {
     }
   }
 
-  checkChange(event: Event, lineNumber: number) {
+  checkChange(event: Event) {
     const element = this.getSelectedElement()
     if(!element) return
     // if((event as InputEvent).inputType === "deleteContentBackward") return
     const anchorOffset = window.getSelection()!.anchorOffset
     const col = this.getColumnFromElementOffset(element, anchorOffset)
-    
-    //this.buildASTFromContent(this.buildStringFromLines())
+
     this.dirty = false;
     const setCursor = () => {
       if(!this.dirty) {
         const range = document.createRange()
         const sel = window.getSelection()
-        const val = this.findColumnInLine(lineNumber, col)
+        const val = this.findColumnInLine(this.getLineNumber(), col)
         range.setStart(val.element.childNodes[0], val.offset)
         range.collapse(true)
 
@@ -133,7 +134,13 @@ export class EditorComponent {
       }
     }
 
-    setTimeout(() => setCursor(), 5)
+    if(!this.isRebuilding) {
+      this.isRebuilding = true
+      setTimeout(() => {
+        this.rebuild()
+        setTimeout(() => setCursor(), 10)
+      }, 10)
+    }
 
     const currentPath = this.focusedTab
     let lines = this.lineElements.map(line => line.map(e => e.value.replaceAll('\r', '').replaceAll('\n', '')).join(''))
@@ -145,6 +152,12 @@ export class EditorComponent {
           this.editorService.saveTempFile(this.tabElements[currentPath].id, snapshot)
       }
     )
+  }
+
+  rebuild() {
+    console.log('rebuild')
+    this.buildASTFromContent(this.buildStringFromLines())
+    this.isRebuilding = false
   }
 
   getTabTitle(filePath: string) {
@@ -348,6 +361,11 @@ export class EditorComponent {
 
   getLine(index: number) {
     return this.getLines()[index] as HTMLElement;
+  }
+
+  getLineNumber() {
+    console.log(this.getSelectedElement())
+    return 1
   }
 
   getSelectedElement() {

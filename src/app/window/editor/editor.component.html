@@ -8,12 +8,12 @@
     <div class="line-numbers">
         <div class="line-numbers-container" *ngFor="let line of lineElements;index as i">{{i+1}}</div>
     </div>
-    <div class="lines" #linesRef>
+    <div class="lines" #linesRef
+    (input)="checkChange($event)"         
+    spellcheck="false"
+    contenteditable="plaintext-only">
         <div class="line-container default-element" *ngFor="let line of lineElements; index as i; let last=last" 
-        spellcheck="false"
-        contenteditable="plaintext-only"
         (click)="handleClick($event, i)"
-        (input)="checkChange($event, i)"
         (keydown)="handleKeydown($event, i)"
         >
             <ng-container *ngFor="let element of line; index as j"
